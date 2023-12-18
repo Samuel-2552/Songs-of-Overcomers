@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
 import os
 import hashlib
 from datetime import datetime
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.config['SECRET_KEY'] = os.urandom(24)
+socketio = SocketIO(app)
 
 DATABASE = 'oilnwine.db'
 
@@ -118,10 +121,108 @@ create_users_table()
 
 @app.route('/')
 def home():
-    return '''
-            <button onclick="location.href='/signup'">Signup</button> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <button onclick="location.href='/login'">Login</button>
-'''
-    #return render_template("full.html")
+    if 'username' in session:
+        login = True
+        user = session['username']
+    else:
+        login = False
+        user=""
+    
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    # Execute a query to select data from the 'songs' table
+    cursor.execute('SELECT id, song_no, title, search_title, search_lyrics FROM songs')
+    # Fetch all rows with the specified columns
+    rows = cursor.fetchall()
+
+    # print(rows)
+    conn.close()
+
+    return render_template("home.html", login=login, user=user, rows=rows)
+
+@app.route('/get_lyrics', methods=['POST'])
+def get_lyrics():
+    data = request.get_json()   
+    selected_id = data['id']
+    # print("ids", selected_id)
+
+    # Connect to the SQLite database
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    # Execute a query to select data from the 'songs' table for the selected ID
+    cursor.execute('SELECT lyrics, transliteration, title FROM songs WHERE id = ?', (selected_id,))
+    
+    row = cursor.fetchone()
+    # print(row)
+
+    # Close the database connection
+    conn.close()
+
+    if row:
+        lyrics = song_view(row[0], row[1])
+        # print(lyrics)
+        return jsonify({'lyrics': lyrics, 'title':row[2]})
+    else:
+        return jsonify({'lyrics': [], 'title': []})
+    
+@app.route('/song/<id>')
+def song(id):
+     # Connect to the SQLite database
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    # Execute a query to select data from the 'songs' table for the selected ID
+    cursor.execute('SELECT lyrics, transliteration, title FROM songs WHERE id = ?', (int(id),))
+    
+    row = cursor.fetchone()
+    # print(row)
+
+    # Close the database connection
+    conn.close()
+
+    lyrics = song_view(row[0], row[1])
+
+    # print("HI")
+
+    return render_template("song_viewer.html", lyrics=lyrics, song_title=row[2])
+
+@app.route('/control/<user>')
+def control(user):
+    #  # Connect to the SQLite database
+    # conn = sqlite3.connect(DATABASE)
+    # cursor = conn.cursor()
+
+    # # Execute a query to select data from the 'songs' table for the selected ID
+    # cursor.execute('SELECT lyrics, transliteration, title FROM songs WHERE id = ?', (int(id),))
+    
+    # row = cursor.fetchone()
+    # # print(row)
+
+    # # Close the database connection
+    # conn.close()
+
+    # lyrics = song_view(row[0], row[1])
+
+    # # print("HI")
+    login=True
+
+    return render_template("control.html", login=login, user=session['username'])
+
+
+@socketio.on('join')
+def handle_join(user):
+    room = user
+    join_room(room)
+    print(f"User {user} joined room {room}")
+
+@socketio.on('send_data_event')
+def send_data(data):
+    room = data.get('user')
+    emitted_data = data.get('data')
+    if room and emitted_data:
+        emit('update_data', emitted_data, room=room)
+        print(f"Data sent to room {room}: {emitted_data}")
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -226,7 +327,7 @@ def add_songs():
         verse_order = request.form['verseOrder']
         search_title = title + "@" + alternate_title + "@" + song_language + " " + str(song_no)
         song_no = song_language + " " + str(song_no)
-        search_lyrics = lyrics.replace('\n', ' ') + " " + transliteration_lyrics.replace('\n', ' ')
+        search_lyrics = lyrics.replace('\r\n', ' ') + " " + transliteration_lyrics.replace('\n', ' ')
         
         conn = create_connection()
         cursor = conn.cursor()
@@ -250,4 +351,4 @@ def add_songs():
     return render_template('add_song.html')
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=True)
+    socketio.run(app, debug=True)
