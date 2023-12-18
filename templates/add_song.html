@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Song Form</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Add Song</h2>
+        <form method="post" action="/add_songs">
+            <div class="form-group">
+                <label for="songLanguage">Song Language</label>
+                <select class="form-control" id="songLanguage" name="songLanguage">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Telugu">Telugu</option>
+                    <option value="Tamil">Tamil</option>
+                    <option value="Malayalam">Malayalam</option>
+                    <option value="Kannada">Kannada</option>
+                    <option value="Marathi">Marathi</option>
+                    <option value="Manipuri">Manipuri</option>
+                    <option value="Nagamese">Nagamese</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div id="otherLanguageField" class="form-group d-none">
+                <label for="otherLanguageInput">Enter Language</label>
+                <input type="text" class="form-control" id="otherLanguageInput" name="otherLanguageInput">
+            </div>
+
+            <div class="form-group">
+                <label for="songNumber">Song Number</label>
+                <input type="number" class="form-control" id="songNumber" name="songNumber" placeholder="Optional, [20]">
+            </div>
+            <div class="form-group">
+                <label for="chord">Chord</label>
+                <input type="text" class="form-control" id="chord" name="chord" placeholder="Optional, [C or G]">
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="alternateTitle">Alternate Title</label>
+                <input type="text" class="form-control" id="alternateTitle" name="alternateTitle"
+                    placeholder="Optional, can put what is easy to search">
+            </div>
+            <div id="transliterationLyricsField" class="form-group d-none">
+                <label for="transliterationLyrics">Transliteration Lyrics</label>
+                <textarea class="form-control" id="transliterationLyrics" name="transliterationLyrics"
+                    rows="10"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="lyrics">Lyrics</label>
+                <textarea class="form-control" id="lyrics" name="lyrics" rows="10" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="verseOrder">Verse Order</label>
+                <input type="text" class="form-control" id="verseOrder" name="verseOrder" placeholder="1 2 1 3 1 4 1">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <br>
+        </form>
+    </div>
+    <br>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('songLanguage').addEventListener('change', function () {
+            var otherLanguageField = document.getElementById('otherLanguageField');
+            var transliterationLyricsField = document.getElementById('transliterationLyricsField');
+            var languageSelected = this.value;
+
+            if (languageSelected === 'Other') {
+                otherLanguageField.classList.remove('d-none');
+                transliterationLyricsField.classList.remove('d-none');
+            } else if (languageSelected === 'English') {
+                otherLanguageField.classList.add('d-none');
+                transliterationLyricsField.classList.add('d-none');
+            }
+            else {
+                // otherLanguageField.classList.remove('d-none');
+                transliterationLyricsField.classList.remove('d-none');
+            }
+        });
+    </script>
+</body>
+
+</html>
