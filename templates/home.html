@@ -79,30 +79,18 @@
             height: 195px;
         }
 
-        #online-status-card {
-            display: none;
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translate(-50%, 0);
-            background-color: red;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            width: 80%;
-            text-align: center;
-        }
-
-        .status-close-button {
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        p {
             cursor: pointer;
+            /* Change cursor on hover */
+            padding: 5px 10px;
+            /* Increase clickable area */
         }
 
-        .status-close-button:hover {
-            color: white;
+        .clicked {
+            background-color: lightblue;
+            /* Change to the desired background color */
         }
+
     </style>
 </head>
 
@@ -500,6 +488,7 @@
             if (clickedElement.tagName === 'P') {
                 // Get the text content of the clicked <p> tag
                 const clickedText = clickedElement.innerHTML;
+                clickedElement.classList.toggle('clicked');
 
                 // Convert <br> tags to newlines for the clicked paragraph
                 const textWithNewlines = convertBRtoNewline(clickedText);
