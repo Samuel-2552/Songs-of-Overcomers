@@ -189,25 +189,16 @@ def song(id):
 
 @app.route('/control/<user>')
 def control(user):
-    #  # Connect to the SQLite database
-    # conn = sqlite3.connect(DATABASE)
-    # cursor = conn.cursor()
-
-    # # Execute a query to select data from the 'songs' table for the selected ID
-    # cursor.execute('SELECT lyrics, transliteration, title FROM songs WHERE id = ?', (int(id),))
-    
-    # row = cursor.fetchone()
-    # # print(row)
-
-    # # Close the database connection
-    # conn.close()
-
-    # lyrics = song_view(row[0], row[1])
-
-    # # print("HI")
+    if 'username' not in session:
+        return render_template('login.html', error_message="Kindly Login to access controls Page!", error_color='red')
     login=True
 
     return render_template("control.html", login=login, user=session['username'])
+
+@app.route('/display/<user>')
+def display(user):
+
+    return render_template("display.html")
 
 
 @socketio.on('join')
@@ -222,6 +213,14 @@ def send_data(data):
     emitted_data = data.get('data')
     if room and emitted_data:
         emit('update_data', emitted_data, room=room)
+        print(f"Data sent to room {room}: {emitted_data}")
+
+@socketio.on('send_para')
+def send_para(data):
+    room = data.get('user')
+    emitted_data = data.get('data')
+    if room and emitted_data:
+        emit('update_para', emitted_data, room=room)
         print(f"Data sent to room {room}: {emitted_data}")
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -351,4 +350,4 @@ def add_songs():
     return render_template('add_song.html')
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

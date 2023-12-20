@@ -25,11 +25,6 @@
             socket.emit('join', user); // Join the room upon connection
             console.log('Connected and joined room:', user);
         });
-
-        socket.on('update_data', function(data) {
-            console.log('Received data:', data);
-            // Handle received data here
-        });
     </script>
     {% endif %}
 
@@ -248,8 +243,8 @@
                     <!-- <button id="plus" type="button" class="btn btn-dark" onclick="increase()" style="position: absolute; left: 55px;"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     
                     <button id="minus" type="button" class="btn btn-dark" onclick="decrease()" style="position: absolute; left: 5px;"><i class="fa fa-minus" aria-hidden="true"></i></button> -->
-                    <button id="minus" type="button" class="btn btn-dark" onclick="sendControl()"
-                        style="position: absolute; left: 5px;"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <button id="send" type="button" class="btn btn-dark" onclick="sendControl()"
+                        style="position: absolute; left: 5px;"><i class="fa fa-send" aria-hidden="true"></i></button>
                     {% endif %}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="location.href='/'">Home Page</button>
