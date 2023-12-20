@@ -465,87 +465,67 @@
         function updateLyrics(lyrics) {
             const lyricsContainer = document.getElementById('lyricsContainer');
             lyricsContainer.innerHTML = lyrics; // Clear previous content
-
-            // lyrics.forEach((verse, index) => {
-            //     const p = document.createElement('p');
-            //     p.className = 'song-lyrics';
-            //     p.innerHTML = verse[1].replace(/\n/g, '<br>'); // Use a global regex to replace all line breaks with <br> tags
-            //     p.style.border = '1px solid black';
-            //     var login = "{{login}}";
-            //     var user = "{{user}}";
-            //     // console.log("login = " + login);
-            //     // console.log("user = "+ user);
-            //     if (login=="True") {
-            //         p.addEventListener('click', () => {
-            //             if (selectedParagraph) {
-            //                 paragraphText = selectedParagraph.innerHTML;
-            //                 if(user=="Chennai"){
-            //                     fetch('/send_paragraph1', {
-            //                         method: 'POST',
-            //                         headers: {
-            //                             'Content-Type': 'application/json',
-            //                         },
-            //                         body: JSON.stringify({ paragraph: paragraphText, font: font_size }),
-            //                     })
-            //                         .then(response => response.json())
-            //                         .then(data => {
-            //                             console.log('Paragraph sent successfully:', data);
-            //                             // Optionally, you can handle the response from the server here
-            //                         })
-            //                         .catch(error => {
-            //                             console.error('Error sending paragraph:', error);
-            //                         });
-            //                     }
-            //                     if(user=="Delhi"){
-            //                     fetch('/send_paragraph2', {
-            //                         method: 'POST',
-            //                         headers: {
-            //                             'Content-Type': 'application/json',
-            //                         },
-            //                         body: JSON.stringify({ paragraph: paragraphText, font: font_size }),
-            //                     })
-            //                         .then(response => response.json())
-            //                         .then(data => {
-            //                             console.log('Paragraph sent successfully:', data);
-            //                             // Optionally, you can handle the response from the server here
-            //                         })
-            //                         .catch(error => {
-            //                             console.error('Error sending paragraph:', error);
-            //                         });
-            //                     }
-            //                     if(user=="Agra"){
-            //                     fetch('/send_paragraph3', {
-            //                         method: 'POST',
-            //                         headers: {
-            //                             'Content-Type': 'application/json',
-            //                         },
-            //                         body: JSON.stringify({ paragraph: paragraphText, font: font_size }),
-            //                     })
-            //                         .then(response => response.json())
-            //                         .then(data => {
-            //                             console.log('Paragraph sent successfully:', data);
-            //                             // Optionally, you can handle the response from the server here
-            //                         })
-            //                         .catch(error => {
-            //                             console.error('Error sending paragraph:', error);
-            //                         });
-            //                     }
-            //                 selectedParagraph.style.border = '1px solid #ccc';
-            //             }
-            //             p.style.border = '1px solid blue';
-            //             selectedParagraph = p;
-            //         });
-            //         lyricsContainer.appendChild(p);
-            //     }
-            //     else {
-            //         p.style.border = '1px solid blue';
-            //         lyricsContainer.appendChild(p);
-            //         // console.log("working");
-            //     }
-            // });
         }
 
     </script>
+
+    {% if login %}
+
+    <script>
+
+        function sendData2(lyrics) {
+            var dataToSend = lyrics; // Replace with your data source
+            var user = "{{user}}_display"; // Replace with the user name or identifier
+
+            socket.emit('send_para', { data: dataToSend, user: user });
+        }
+
+        socket.on('connect', function () {
+            var user = "{{user}}_display"; // Replace with the user name or identifier
+            socket.emit('join', user); // Join the room upon connection
+            console.log('Connected and joined display room:', user);
+        });
+
+        // Function to convert <br> tags to newline characters
+        function convertBRtoNewline(text) {
+            return text.replace(/<br\s*\/?>/gi, '\n');
+        }
+
+        // Function to be executed when a <p> tag is clicked
+        function handleClick(event) {
+            // Get the clicked element
+            const clickedElement = event.target;
+
+            // Check if the clicked element is a <p> tag
+            if (clickedElement.tagName === 'P') {
+                // Get the text content of the clicked <p> tag
+                const clickedText = clickedElement.innerHTML;
+
+                // Convert <br> tags to newlines for the clicked paragraph
+                const textWithNewlines = convertBRtoNewline(clickedText);
+
+                // Now textWithNewlines contains the text content with newline characters
+                console.log(textWithNewlines);
+
+                sendData2(textWithNewlines);
+                // Perform other actions with the modified text content as needed
+            }
+        }
+
+        // Event delegation: Listen for click events on the document
+        document.addEventListener('click', function (event) {
+            // Check if the clicked element or any of its ancestors is a <p> tag
+            const isParagraph = event.target.closest('p');
+
+            // If a <p> tag or its descendant is clicked, handle the click
+            if (isParagraph) {
+                handleClick(event);
+            }
+        });
+
+    </script>
+
+    {% endif %}
 
 
 
