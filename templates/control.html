@@ -88,12 +88,20 @@
         }
 
         p {
-            cursor: pointer; /* Change cursor on hover */
-            padding: 5px 10px; /* Increase clickable area */
+            cursor: pointer;
+            /* Change cursor on hover */
+            padding: 5px 10px;
+            /* Increase clickable area */
         }
-
+/* 
         p:hover {
-            background-color: #f0f0f0; /* Optional: Highlight on hover */
+            background-color: #f0f0f0;
+            /* Optional: Highlight on hover 
+        } */
+
+        .clicked {
+            background-color: lightblue;
+            /* Change to the desired background color */
         }
 
         /* Media query for responsiveness */
@@ -175,6 +183,10 @@
                 // Get the text content of the clicked <p> tag
                 const clickedText = clickedElement.innerHTML;
 
+                clickedElement.classList.toggle('clicked');
+
+                
+
                 // Convert <br> tags to newlines for the clicked paragraph
                 const textWithNewlines = convertBRtoNewline(clickedText);
 
@@ -190,6 +202,8 @@
         document.addEventListener('click', function (event) {
             // Check if the clicked element or any of its ancestors is a <p> tag
             const isParagraph = event.target.closest('p');
+
+            
 
             // If a <p> tag or its descendant is clicked, handle the click
             if (isParagraph) {
