@@ -228,14 +228,17 @@
                     <!-- <button type="button" class="btn btn-dark" style="position: absolute; left: 5px;"
                         onclick="listen()"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</button> -->
                     {% if login %}
-                    <!-- <button id="plus" type="button" class="btn btn-dark" onclick="increase()" style="position: absolute; left: 55px;"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    <button id="plus" type="button" class="btn btn-dark" onclick="sendData2('font+')" style="position: absolute; left: 55px;"><i class="fa fa-plus" aria-hidden="true"></i></button>
                     
-                    <button id="minus" type="button" class="btn btn-dark" onclick="decrease()" style="position: absolute; left: 5px;"><i class="fa fa-minus" aria-hidden="true"></i></button> -->
+                    <button id="minus" type="button" class="btn btn-dark" onclick="sendData2('font-')" style="position: absolute; left: 5px;"><i class="fa fa-minus" aria-hidden="true"></i></button>
                     <button id="send" type="button" class="btn btn-dark" onclick="sendControl()"
-                        style="position: absolute; left: 5px;"><i class="fa fa-send" aria-hidden="true"></i></button>
-                    {% endif %}
+                        style="position: absolute; left: 105px;"><i class="fa fa-send" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-primary" onclick="sendData2(' ')"><i class="fa fa-image" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-secondary" onclick="sendData2('blank')"><i class="fa fa-image" aria-hidden="true"></i></button>
+                    {% else %}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="location.href='/'">Home Page</button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -437,18 +440,6 @@
             });
         });
         let selectedParagraph = null;
-
-        var font_size = 500;
-
-        function increase() {
-            font_size = font_size + 20;
-
-        }
-
-        function decrease() {
-            font_size = font_size - 20;
-
-        }
 
         function updateLyrics(lyrics) {
             const lyricsContainer = document.getElementById('lyricsContainer');

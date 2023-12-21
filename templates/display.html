@@ -28,11 +28,68 @@
             // Handle received data here
             var lyrics = document.getElementById('lyrics');
 
-            // Replace newline characters (\n) with <br> tags for displaying line breaks in HTML
-            var formattedData = data.replace(/\n/g, '<br>');
 
-            // Set the HTML content with line breaks to the lyrics element
-            lyrics.innerHTML = formattedData;
+            if (data == "font+") {
+                // Get the device width
+                var deviceWidth = window.innerWidth;
+
+                // Example of performing different actions based on device width
+                if (deviceWidth < 600) {
+                    var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                    var newSize = parseFloat(currentSize) + 0.5; // Increase font size by 2px (adjust as needed)
+                    lyrics.style.fontSize = newSize + 'px';
+                } else if (deviceWidth >= 600 && deviceWidth < 900) {
+                    var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                    var newSize = parseFloat(currentSize) + 1; // Increase font size by 2px (adjust as needed)
+                    lyrics.style.fontSize = newSize + 'px';
+                } else {
+                    var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                    var newSize = parseFloat(currentSize) + 2; // Increase font size by 2px (adjust as needed)
+                    lyrics.style.fontSize = newSize + 'px';
+                }
+
+                var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                var newSize = parseFloat(currentSize) + 2; // Increase font size by 2px (adjust as needed)
+                lyrics.style.fontSize = newSize + 'px';
+            }
+            else if (data == "font-") {
+
+                // Get the device width
+                var deviceWidth = window.innerWidth;
+
+                // Example of performing different actions based on device width
+                if (deviceWidth < 600) {
+                    var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                var newSize = parseFloat(currentSize) - 0.5; // Increase font size by 2px (adjust as needed)
+                lyrics.style.fontSize = newSize + 'px';
+                } else if (deviceWidth >= 600 && deviceWidth < 1024) {
+                    var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                var newSize = parseFloat(currentSize) - 1; // Increase font size by 2px (adjust as needed)
+                lyrics.style.fontSize = newSize + 'px';
+                } else {
+                    var currentSize = window.getComputedStyle(lyrics, null).getPropertyValue('font-size');
+                var newSize = parseFloat(currentSize) - 2; // Increase font size by 2px (adjust as needed)
+                lyrics.style.fontSize = newSize + 'px';
+                }
+
+                
+            }
+            else if (data == "blank") {
+                lyrics.innerHTML = "";
+                if (document.body.style.backgroundColor === "black") {
+                    document.body.style.backgroundColor = "white"; // Change to another color or default color
+                } else {
+                    document.body.style.backgroundColor = "black";
+                }
+            }
+            else {
+
+                // Replace newline characters (\n) with <br> tags for displaying line breaks in HTML
+                var formattedData = data.replace(/\n/g, '<br>');
+
+                // Set the HTML content with line breaks to the lyrics element
+                lyrics.innerHTML = formattedData;
+            }
         });
 
     </script>
@@ -91,7 +148,6 @@
 
         #lyrics {
             text-align: center;
-            font-size: 500%;
             font-weight: bold;
         }
 
@@ -103,6 +159,25 @@
             /* Horizontally center items */
             height: 100vh;
             /* Set the container height to the full viewport height */
+        }
+
+        @media only screen and (max-width: 600px) {
+
+            /* Your CSS styles for devices with a width up to 600px */
+            #lyrics {
+
+                font-size: 200%;
+            }
+        }
+
+        /* Apply styles for screens with a minimum width of 601px */
+        @media only screen and (min-width: 601px) {
+            #lyrics {
+
+                font-size: 500%;
+            }
+
+            /* Your CSS styles for devices with a width of 601px or larger */
         }
     </style>
 </head>
