@@ -349,3 +349,5 @@ def add_songs():
     
     return render_template('add_song.html')
 
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

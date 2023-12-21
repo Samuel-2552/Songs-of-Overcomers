@@ -11,7 +11,7 @@
     {% if login %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script type="text/javascript">
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var socket = io.connect('https://' + document.domain + ':' + location.port);
 
         function sendData(lyrics) {
             var dataToSend = lyrics; // Replace with your data source
