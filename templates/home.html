@@ -23,7 +23,7 @@
         socket.on('connect', function () {
             var user = "{{user}}"; // Replace with the user name or identifier
             socket.emit('join', user); // Join the room upon connection
-            console.log('Connected and joined room:', user);
+            // console.log('Connected and joined room:', user);
         });
     </script>
     {% endif %}
@@ -216,8 +216,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="songModalLabel">Song Title</h5>
-                    <button type="button" class="btn btn-primary"
-                        onclick="copy_alert()"
+                    <button id="saveButton" class="btn btn-primary"
+                        style="position: absolute; right: 105px; display: none;"><i class="fa fa-save"
+                            aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-primary" onclick="copy_alert()"
                         style="position: absolute; right: 55px;"><i class="fa fa-share-alt"
                             aria-hidden="true"></i></button>
                     <button type="button" class="btn btn-dark" style="position: absolute; right: 5px;"
@@ -420,6 +422,10 @@
 
         var lyrics = "";
 
+        function temp_update(updated_lyrics){
+            lyrics = updated_lyrics;
+        }
+
         function sendControl() {
             sendData(lyrics);
         }
@@ -439,7 +445,7 @@
                     .then(response => response.json())
                     .then(data => {
                         lyrics = data.lyrics; // Assuming data.lyrics contains the received lyrics
-                        console.log(lyrics);
+                        // console.log(lyrics);
                         const title = data.title;
                         updateLyrics(lyrics);
                         songModalTitle.textContent = title;
@@ -451,9 +457,20 @@
         });
         let selectedParagraph = null;
 
+        // Function to add the 'original' class to existing paragraphs
+        function addOriginalClassToParagraphs() {
+            const allParagraphs = document.querySelectorAll('#lyricsContainer p');
+            allParagraphs.forEach(paragraph => {
+                paragraph.classList.add('original');
+            });
+        }
+
         function updateLyrics(lyrics) {
             const lyricsContainer = document.getElementById('lyricsContainer');
+
             lyricsContainer.innerHTML = lyrics; // Clear previous content
+
+            addOriginalClassToParagraphs();
         }
 
     </script>
@@ -472,7 +489,7 @@
         socket.on('connect', function () {
             var user = "{{user}}_display"; // Replace with the user name or identifier
             socket.emit('join', user); // Join the room upon connection
-            console.log('Connected and joined display room:', user);
+            // console.log('Connected and joined display room:', user);
         });
 
         // Function to convert <br> tags to newline characters
@@ -495,7 +512,7 @@
                 const textWithNewlines = convertBRtoNewline(clickedText);
 
                 // Now textWithNewlines contains the text content with newline characters
-                console.log(textWithNewlines);
+                // console.log(textWithNewlines);
 
                 sendData2(textWithNewlines);
                 // Perform other actions with the modified text content as needed
@@ -507,12 +524,74 @@
             // Check if the clicked element or any of its ancestors is a <p> tag
             const isParagraph = event.target.closest('p');
 
+
             // If a <p> tag or its descendant is clicked, handle the click
             if (isParagraph) {
                 handleClick(event);
             }
         });
 
+        // Function to toggle the visibility of the save button
+        function toggleSaveButtonVisibility() {
+            const saveButton = document.getElementById('saveButton');
+            saveButton.style.display = saveButton.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Function to make the paragraph editable and show the save button
+        function makeParagraphEditable(paragraph) {
+            paragraph.contentEditable = true;
+            paragraph.classList.add('editable');
+
+            toggleSaveButtonVisibility(); // Show the save button
+        }
+
+        // Function to save the edited text as paragraphs and hide the save button
+        function saveEditedText() {
+            const allParagraphs = document.querySelectorAll('.original, .editable');
+            const formattedText = [];
+
+            allParagraphs.forEach(paragraph => {
+
+                var text = paragraph.innerHTML;
+                console.log(text)
+                text = text.replace('<div><br>', '<p>');
+                if (text !== '') {
+                    formattedText.push(`<p>${text}</p>`);
+                }
+            });
+            console.log("finish");
+
+            const lyricsContainer = document.getElementById('lyricsContainer');
+            lyricsContainer.innerHTML = formattedText.join('');
+
+            const edit = document.querySelectorAll('p');
+            edit.forEach(element => {
+                element.classList.add('original'); // Add original class
+                element.style.border = '1px solid black';
+                element.style.padding = '10px';
+
+            });
+
+            temp_update(lyricsContainer.innerHTML);
+
+
+            toggleSaveButtonVisibility(); // Hide the save button after saving
+        }
+
+        // Event listener for double-click to make paragraph editable and show save button
+        document.addEventListener('dblclick', function (event) {
+            const doubleClickedElement = event.target;
+
+            if (doubleClickedElement.tagName === 'P' && doubleClickedElement.classList.contains('original')) {
+                makeParagraphEditable(doubleClickedElement);
+            }
+        });
+
+        // Event listener for save button click to save and format edited text and hide the save button
+        const saveButton = document.getElementById('saveButton');
+        saveButton.addEventListener('click', function () {
+            saveEditedText();
+        });
     </script>
 
     {% endif %}
@@ -531,13 +610,13 @@
         }
         var text = getBaseURL() + "/song/"
         function copyTextToClipboard(selectedId) {
-             text = text+ selectedId;
+            text = text + selectedId;
 
             try {
                 navigator.clipboard.writeText(text)
                     .then(() => {
-                        console.log('Text copied to clipboard:', text);
-                        
+                        // console.log('Text copied to clipboard:', text);
+
                     })
                     .catch(err => {
                         console.error('Unable to copy text to clipboard:', err);
@@ -547,7 +626,7 @@
             }
         }
 
-        function copy_alert(){
+        function copy_alert() {
             alert("Link Copied Succesfully!");
         }
 

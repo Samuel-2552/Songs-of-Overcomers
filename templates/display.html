@@ -76,10 +76,13 @@
             }
             else if (data == "blank") {
                 lyrics.innerHTML = "";
+                container = document.getElementById("container");
                 if (document.body.style.backgroundColor === "black") {
                     document.body.style.backgroundColor = "white"; // Change to another color or default color
+                    container.style.backgroundColor = "white";
                 } else {
                     document.body.style.backgroundColor = "black";
+                    container.style.backgroundColor = "black";
                 }
             }
             else {
