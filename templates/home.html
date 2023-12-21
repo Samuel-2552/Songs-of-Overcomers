@@ -20,7 +20,7 @@
             socket.emit('send_data_event', { data: dataToSend, user: user });
         }
 
-        socket.on('connect', function() {
+        socket.on('connect', function () {
             var user = "{{user}}"; // Replace with the user name or identifier
             socket.emit('join', user); // Join the room upon connection
             console.log('Connected and joined room:', user);
@@ -90,7 +90,6 @@
             background-color: lightblue;
             /* Change to the desired background color */
         }
-
     </style>
 </head>
 
@@ -217,7 +216,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="songModalLabel">Song Title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn btn-primary"
+                        onclick="copy_alert()"
+                        style="position: absolute; right: 55px;"><i class="fa fa-share-alt"
+                            aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-dark" style="position: absolute; right: 5px;"
+                        data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-window-close"
+                            aria-hidden="true"></i></button>
                 </div>
                 <div class="modal-body" id="songbody">
                     <center>
@@ -228,13 +233,17 @@
                     <!-- <button type="button" class="btn btn-dark" style="position: absolute; left: 5px;"
                         onclick="listen()"><i class="fa fa-headphones" aria-hidden="true"></i> Listen</button> -->
                     {% if login %}
-                    <button id="plus" type="button" class="btn btn-dark" onclick="sendData2('font+')" style="position: absolute; left: 55px;"><i class="fa fa-plus" aria-hidden="true"></i></button>
-                    
-                    <button id="minus" type="button" class="btn btn-dark" onclick="sendData2('font-')" style="position: absolute; left: 5px;"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <button id="plus" type="button" class="btn btn-dark" onclick="sendData2('font+')"
+                        style="position: absolute; left: 55px;"><i class="fa fa-plus" aria-hidden="true"></i></button>
+
+                    <button id="minus" type="button" class="btn btn-dark" onclick="sendData2('font-')"
+                        style="position: absolute; left: 5px;"><i class="fa fa-minus" aria-hidden="true"></i></button>
                     <button id="send" type="button" class="btn btn-dark" onclick="sendControl()"
                         style="position: absolute; left: 105px;"><i class="fa fa-send" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-primary" onclick="sendData2(' ')"><i class="fa fa-image" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-secondary" onclick="sendData2('blank')"><i class="fa fa-image" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-primary" onclick="sendData2(' ')"><i class="fa fa-image"
+                            aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-dark" onclick="sendData2('blank')"><i class="fa fa-image"
+                            aria-hidden="true"></i></button>
                     {% else %}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="location.href='/'">Home Page</button>
@@ -419,6 +428,7 @@
         rows.forEach(row => {
             row.addEventListener('click', () => {
                 const selectedId = row.getAttribute('data-id');
+                copyTextToClipboard(selectedId);
                 fetch('/get_lyrics', {
                     method: 'POST',
                     headers: {
@@ -506,6 +516,49 @@
     </script>
 
     {% endif %}
+
+    <script>
+        function getBaseURL() {
+            var currentURL = window.location.href; // Get the current full URL
+            var baseURL;
+
+            // Split the URL by "/"
+            var parts = currentURL.split('/');
+
+            // Reconstruct the base URL using the protocol, hostname, and port (if specified)
+            baseURL = parts[0] + '//' + parts[2];
+            return baseURL;
+        }
+        var text = getBaseURL() + "/song/"
+        function copyTextToClipboard(selectedId) {
+             text = text+ selectedId;
+
+            try {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        console.log('Text copied to clipboard:', text);
+                        
+                    })
+                    .catch(err => {
+                        console.error('Unable to copy text to clipboard:', err);
+                    });
+            } catch (err) {
+                console.error('Oops, unable to copy');
+            }
+        }
+
+        function copy_alert(){
+            alert("Link Copied Succesfully!");
+        }
+
+
+
+
+
+
+
+
+    </script>
 
 
 
