@@ -47,6 +47,7 @@ def create_songs_table():
             lyrics TEXT,
             transliteration TEXT,
             verse_order TEXT,
+            chord TEXT,
             search_title TEXT,
             search_lyrics TEXT,
             youtube_link TEXT,
@@ -59,11 +60,11 @@ def create_songs_table():
     conn.commit()
     conn.close()
 
-def song_view(lyrics, transliteration_lyrics):
+def song_view(lyrics, transliteration_lyrics, chord):
     if transliteration_lyrics == "":
         paragraphs = lyrics.split('\r\n')
         para_count = 1
-        formatted_song = f"<p id={para_count} style='border: 1px solid black;padding: 10px;'>"
+        formatted_song = f"<p id={para_count} style='border: 1px solid black;padding: 10px;'><span style='font-weight:bold;font-size:larger;'>{chord}</span><br>"
         for paragraph in paragraphs:
             if paragraph == "":
                 para_count +=1
@@ -78,7 +79,7 @@ def song_view(lyrics, transliteration_lyrics):
         allow1 = 0
         allow2 = 0
         para_count = 1
-        formatted_song = f"<p id={para_count} style='border: 1px solid black;padding: 10px;'>"
+        formatted_song = f"<p id={para_count} style='border: 1px solid black;padding: 10px;'><span style='font-weight:bold;font-size:larger;'>{chord}</span><br>"
         for i in range(max(len(paragraphs2),len(paragraphs1))):
             if allow1 == 0:
                 try:
@@ -140,6 +141,7 @@ def home():
 
     return render_template("home.html", login=login, user=user, rows=rows)
 
+
 @app.route('/get_lyrics', methods=['POST'])
 def get_lyrics():
     data = request.get_json()   
@@ -151,7 +153,7 @@ def get_lyrics():
     cursor = conn.cursor()
 
     # Execute a query to select data from the 'songs' table for the selected ID
-    cursor.execute('SELECT lyrics, transliteration, title FROM songs WHERE id = ?', (selected_id,))
+    cursor.execute('SELECT lyrics, transliteration, chord, title FROM songs WHERE id = ?', (selected_id,))
     
     row = cursor.fetchone()
     # print(row)
@@ -160,32 +162,36 @@ def get_lyrics():
     conn.close()
 
     if row:
-        lyrics = song_view(row[0], row[1])
+        lyrics = song_view(row[0], row[1], row[2])
         # print(lyrics)
-        return jsonify({'lyrics': lyrics, 'title':row[2]})
+        return jsonify({'lyrics': lyrics, 'title':row[3]})
     else:
         return jsonify({'lyrics': [], 'title': []})
     
 @app.route('/song/<id>')
 def song(id):
-     # Connect to the SQLite database
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
+    try:
+        # Connect to the SQLite database
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
 
-    # Execute a query to select data from the 'songs' table for the selected ID
-    cursor.execute('SELECT lyrics, transliteration, title FROM songs WHERE id = ?', (int(id),))
-    
-    row = cursor.fetchone()
-    # print(row)
+        # Execute a query to select data from the 'songs' table for the selected ID
+        cursor.execute('SELECT lyrics, transliteration, chord, title FROM songs WHERE id = ?', (int(id),))
+        
+        row = cursor.fetchone()
+        # print(row)
 
-    # Close the database connection
-    conn.close()
+        # Close the database connection
+        conn.close()
 
-    lyrics = song_view(row[0], row[1])
+        lyrics = song_view(row[0], row[1], row[2])
+    except:
+        conn.close()
+        return "Song Not Available!"
 
     # print("HI")
 
-    return render_template("song_viewer.html", lyrics=lyrics, song_title=row[2])
+    return render_template("song_viewer.html", lyrics=lyrics, song_title=row[3])
 
 @app.route('/control/<user>')
 def control(user):
@@ -324,8 +330,12 @@ def add_songs():
         alternate_title = request.form.get('alternateTitle')
         lyrics = request.form['lyrics']
         verse_order = request.form['verseOrder']
-        search_title = title + "@" + alternate_title + "@" + song_language + " " + str(song_no)
-        song_no = song_language + " " + str(song_no)
+        if song_language == "Other":
+            search_title = title + "@" + alternate_title + "@" + other_language + " " + str(song_no)
+            song_no = other_language + " " + str(song_no)
+        else:
+            search_title = title + "@" + alternate_title + "@" + song_language + " " + str(song_no)
+            song_no = song_language + " " + str(song_no)
         search_lyrics = lyrics.replace('\r\n', ' ') + " " + transliteration_lyrics.replace('\n', ' ')
         
         conn = create_connection()
@@ -336,10 +346,10 @@ def add_songs():
 
         # Insert song data into the songs table
         cursor.execute('''
-            INSERT INTO songs (song_no, title, alternate_title, lyrics, transliteration, verse_order, search_title, search_lyrics, create_date, modified_date, username)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO songs (song_no, title, alternate_title, lyrics, transliteration, verse_order, chord, search_title, search_lyrics, create_date, modified_date, username)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (song_no, title, alternate_title, lyrics, transliteration_lyrics,
-            verse_order, search_title, search_lyrics, current_date, current_date, session['username']))
+            verse_order, chord, search_title, search_lyrics, current_date, current_date, session['username']))
 
         conn.commit()
         conn.close()
@@ -348,6 +358,69 @@ def add_songs():
         return redirect('/dashboard')
     
     return render_template('add_song.html')
+
+@app.route('/edit_songs/<int:id>', methods=['GET', 'POST'])
+def edit_songs(id):
+    if 'username' in session:
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            # Execute a query to select data from the 'songs' table for the selected ID
+            cursor.execute('SELECT * FROM songs WHERE id = ?', (id,))
+            default_values = cursor.fetchone()
+
+            conn.close()
+
+            if request.method == 'POST':
+                song_language = request.form['songLanguage']
+                other_language = request.form.get('otherLanguageInput')
+                transliteration_lyrics = request.form.get('transliterationLyrics')
+                song_no = request.form.get('songNumber')
+                chord = request.form.get('chord')
+                title = request.form['title']
+                alternate_title = request.form.get('alternateTitle')
+                lyrics = request.form['lyrics']
+                verse_order = request.form['verseOrder']
+                if song_language == "Other":
+                    search_title = title + "@" + alternate_title + "@" + other_language + " " + str(song_no)
+                    song_no = other_language + " " + str(song_no)
+                else:
+                    search_title = title + "@" + alternate_title + "@" + song_language + " " + str(song_no)
+                    song_no = song_language + " " + str(song_no)
+                search_lyrics = lyrics.replace('\r\n', ' ') + " " + transliteration_lyrics.replace('\n', ' ')
+                
+                conn = create_connection()
+                cursor = conn.cursor()
+
+                # Get the current date and time
+                current_date = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+                cursor.execute('''
+                                UPDATE songs 
+                                SET song_no = ?, title = ?, alternate_title = ?, lyrics = ?, 
+                                    transliteration = ?, verse_order = ?, chord = ?, search_title = ?, 
+                                    search_lyrics = ?, modified_date = ?, username = ?
+                                WHERE id = ?
+                            ''', (song_no, title, alternate_title, lyrics, transliteration_lyrics,
+                                verse_order, chord, search_title, search_lyrics, current_date,
+                                session['username'], id))
+
+                conn.commit()
+                conn.close()
+
+
+                return redirect('/dashboard')
+        except:
+            conn.close()
+            return "Selected Song Does not Exist."
+        
+        print(default_values)
+
+        song_no = default_values[1].split()
+        
+        return render_template("edit_song.html", id=id, song_no0 = song_no[0], song_no1 = song_no[1], defaultValues7=default_values[7], defaultValues2=default_values[2], defaultValues3= default_values[3], defaultValues5=default_values[5], defaultValues4 = default_values[4], defaultValues6 = default_values[6])
+    
+    return render_template('login.html', error_message="Kindly Login to edit Songs!", error_color='red')
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

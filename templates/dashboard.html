@@ -20,12 +20,34 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Logout</h5>
-                        <p class="card-text">Click here to logout from the dashboard.</p>
-                        <a href="/logout" class="btn btn-primary">Logout</a>
+                        <h5 class="card-title">Controls Page</h5>
+                        <p class="card-text">Access controls page.</p>
+                        <a href="/control/{{user_name}}" class="btn btn-primary">Controls Page</a>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Display Page</h5>
+                        <p class="card-text">Go to the display page.</p>
+                        <a href="/display/{{user_name}}_display" class="btn btn-primary">Display Page</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Home Page</h5>
+                        <p class="card-text">Navigate to the home page.</p>
+                        <a href="/" class="btn btn-primary">Home Page</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row mt-4">
+            
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
@@ -46,53 +68,8 @@
             </div>
         </div>
         <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Display Settings</h5>
-                        <p class="card-text">Adjust display settings.</p>
-                        <a href="/display_settings" class="btn btn-primary">Display Settings</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Home Page</h5>
-                        <p class="card-text">Navigate to the home page.</p>
-                        <a href="/" class="btn btn-primary">Home Page</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Display Page</h5>
-                        <p class="card-text">Go to the display page.</p>
-                        <a href="/display/{{user_name}}_display" class="btn btn-primary">Display Page</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Controls Page</h5>
-                        <p class="card-text">Access controls page.</p>
-                        <a href="/control/{{user_name}}" class="btn btn-primary">Controls Page</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Support Page</h5>
-                        <p class="card-text">Visit the support page.</p>
-                        <a href="/support_page" class="btn btn-primary">Support Page</a>
-                    </div>
-                </div>
-            </div>
+            
+            
             <!-- Add more cards as needed -->
         </div>
     </div>

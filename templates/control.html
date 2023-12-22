@@ -93,7 +93,8 @@
             padding: 5px 10px;
             /* Increase clickable area */
         }
-/* 
+
+        /* 
         p:hover {
             background-color: #f0f0f0;
             /* Optional: Highlight on hover 
@@ -102,6 +103,11 @@
         .clicked {
             background-color: lightblue;
             /* Change to the desired background color */
+        }
+
+        .normal {
+            background-color: transparent;
+            /* Set the default background color here */
         }
 
         /* Media query for responsiveness */
@@ -173,6 +179,10 @@
             return text.replace(/<br\s*\/?>/gi, '\n');
         }
 
+        let previousClickedElement = null; // To store the previously clicked paragraph
+
+
+
         // Function to be executed when a <p> tag is clicked
         function handleClick(event) {
             // Get the clicked element
@@ -183,9 +193,18 @@
                 // Get the text content of the clicked <p> tag
                 const clickedText = clickedElement.innerHTML;
 
+                // Remove the 'clicked' class from the previously clicked paragraph, if any
+                if (previousClickedElement) {
+                    previousClickedElement.classList.remove('clicked');
+                    previousClickedElement.classList.add('normal');
+                }
+                // Toggle the 'clicked' class for the current clicked paragraph
                 clickedElement.classList.toggle('clicked');
+                clickedElement.classList.toggle('normal');
 
-                
+                // Update the previously clicked element
+                previousClickedElement = clickedElement;
+
 
                 // Convert <br> tags to newlines for the clicked paragraph
                 const textWithNewlines = convertBRtoNewline(clickedText);
@@ -203,7 +222,7 @@
             // Check if the clicked element or any of its ancestors is a <p> tag
             const isParagraph = event.target.closest('p');
 
-            
+
 
             // If a <p> tag or its descendant is clicked, handle the click
             if (isParagraph) {
