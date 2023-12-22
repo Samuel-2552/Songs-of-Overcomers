@@ -270,7 +270,7 @@
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Song Title</center>
                             </th>
                             {% if login %}
-                            <th>
+                            <th style="width:20%">
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Edit Song</center>
                             </th>
                             {% endif %}
@@ -286,7 +286,7 @@
                             <td>{{ row[1] }}</td>
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[2] }}</td>
                             {% if login %}
-                            <td><button class="btn-secondary" onclick="location.href='/edit_songs/{{row[0]}}'"><i class="fa fa-edit"></i></button></td>
+                            <td><center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i class="fa fa-edit"></i></button></center></td>
                             {% endif %}
                             <td style="display: none;">{{ row[3] }}</td>
                             <td style="display: none;">{{ row[4] }}</td>

@@ -176,7 +176,7 @@ def song(id):
         cursor = conn.cursor()
 
         # Execute a query to select data from the 'songs' table for the selected ID
-        cursor.execute('SELECT lyrics, transliteration, chord, title FROM songs WHERE id = ?', (int(id),))
+        cursor.execute('SELECT lyrics, transliteration, chord, title, youtube_link FROM songs WHERE id = ?', (int(id),))
         
         row = cursor.fetchone()
         # print(row)
@@ -191,7 +191,7 @@ def song(id):
 
     # print("HI")
 
-    return render_template("song_viewer.html", lyrics=lyrics, song_title=row[3])
+    return render_template("song_viewer.html", lyrics=lyrics, song_title=row[3], link = row[4])
 
 @app.route('/control/<user>')
 def control(user):
@@ -346,7 +346,7 @@ def add_songs():
 
         # Insert song data into the songs table
         cursor.execute('''
-            INSERT INTO songs (song_no, title, alternate_title, lyrics, transliteration, verse_order, chord, search_title, search_lyrics, create_date, modified_date, username)
+            INSERT INTO songs (song_no, title, alternate_title, lyrics, transliteration, youtube_link, chord, search_title, search_lyrics, create_date, modified_date, username)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (song_no, title, alternate_title, lyrics, transliteration_lyrics,
             verse_order, chord, search_title, search_lyrics, current_date, current_date, session['username']))
@@ -398,7 +398,7 @@ def edit_songs(id):
                 cursor.execute('''
                                 UPDATE songs 
                                 SET song_no = ?, title = ?, alternate_title = ?, lyrics = ?, 
-                                    transliteration = ?, verse_order = ?, chord = ?, search_title = ?, 
+                                    transliteration = ?, youtube_link = ?, chord = ?, search_title = ?, 
                                     search_lyrics = ?, modified_date = ?, username = ?
                                 WHERE id = ?
                             ''', (song_no, title, alternate_title, lyrics, transliteration_lyrics,
