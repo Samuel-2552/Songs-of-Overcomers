@@ -263,9 +263,6 @@
                     <thead class="table-dark">
                         <tr>
                             <th style="display: none;">Id</th>
-                            <th style="width:25%">
-                                <center style="font-size: 20px;color: bisque; font-family:cursive;">Song No</center>
-                            </th>
                             <th>
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Song Title</center>
                             </th>
@@ -283,8 +280,8 @@
                     <tbody class="table-primary" id="songTable">
                         {% for row in rows %}
                         <tr data-id="{{ row[0] }}">
-                            <td>{{ row[1] }}</td>
-                            <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[2] }}</td>
+                            <!-- <td>{{ row[1] }}</td> -->
+                            <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[1] }}</td>
                             {% if login %}
                             <td><center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i class="fa fa-edit"></i></button></center></td>
                             {% endif %}
