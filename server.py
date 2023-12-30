@@ -6,6 +6,14 @@ from datetime import datetime
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import re
 
+import logging
+
+logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
+# Then use logging commands throughout your Flask app to log relevant information
+logging.debug('Debug message')
+logging.info('Informational message')
+logging.error('Error message')
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -433,4 +441,4 @@ def edit_songs(id):
     return render_template('login.html', error_message="Kindly Login to edit Songs!", error_color='red')
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
