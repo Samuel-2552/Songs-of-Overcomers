@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file
 import sqlite3
 import os
 import hashlib
@@ -142,6 +142,12 @@ def song_view(lyrics, transliteration_lyrics, chord):
 create_songs_table()
 
 create_users_table()
+
+@app.route('/download')
+def download_db():
+    db_file_path = 'oilnwine.db'  # Replace with your SQLite database file path
+    
+    return send_file(db_file_path, as_attachment=True)
 
 @app.route('/')
 def home():
