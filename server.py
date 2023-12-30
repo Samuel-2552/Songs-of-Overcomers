@@ -149,6 +149,12 @@ def download_db():
     
     return send_file(db_file_path, as_attachment=True)
 
+@app.route('/download_logs')
+def download_log():
+    db_file_path = '/home/oilnwine/flaskapp.log'  # Replace with your SQLite database file path
+
+    return send_file(db_file_path, as_attachment=True)
+
 @app.route('/')
 def home():
     if 'username' in session:
