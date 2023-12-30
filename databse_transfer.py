@@ -76,7 +76,7 @@ create_users_table()
 create_songs_table()
 
 
-for i in range(1,1661):
+for i in range(1,1773):
     # Connect to the SQLite database
     db_file = 'songs.sqlite'  # Replace with the path to your SQLite database file
     conn = sqlite3.connect(db_file)
