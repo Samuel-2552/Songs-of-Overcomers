@@ -10,6 +10,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {% if login %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".del").hide();
+            $(".del_btn").click(function () {
+                $(".del").show();
+            });
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script type="text/javascript">
         var socket = io.connect('https://' + document.domain + ':' + location.port);
@@ -156,13 +165,15 @@
                             type="button" role="tab" aria-controls="nagamese" aria-selected="false">Nagamese</button>
                     </li> -->
                     {% if login %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" type="button"
-                        onclick="location.href='/dashboard'">Dashboard</button>
+                    <li class="nav-item del_btn" role="presentation">
+                        <button class="nav-link" type="button" onclick="">Delete Song<i class="fa fa-trash-o"
+                                aria-hidden="true"></i></button></button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" 
-                            type="button" onclick="location.href='/logout'">Log Out</button>
+                        <button class="nav-link" type="button" onclick="location.href='/dashboard'">Dashboard</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" onclick="location.href='/logout'">Log Out</button>
                     </li>
                     {% else %}
                     <li class="nav-item" role="presentation">
@@ -270,6 +281,9 @@
                             <th style="width:20%">
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Edit Song</center>
                             </th>
+                            <th style="width:20%" class="del">
+                                <center style="font-size: 20px;color: bisque; font-family:cursive;">Delete</center>
+                            </th>
                             {% endif %}
                             <!-- <th style="display: none;">Alternate Title</th>
                             <th style="display: none;">Search Title</th>
@@ -279,11 +293,20 @@
                     </thead>
                     <tbody class="table-primary" id="songTable">
                         {% for row in rows %}
-                        <tr data-id="{{ row[0] }}">
+                        <tr data-id="{{ row[0] }}" id="{{ row[0] }}">
                             <!-- <td>{{ row[1] }}</td> -->
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[1] }}</td>
                             {% if login %}
-                            <td><center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i class="fa fa-edit"></i></button></center></td>
+                            <td>
+                                <center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i
+                                            class="fa fa-edit"></i></button></center>
+                            </td>
+
+                            <td class="del">
+                                <center><button class="btn-primary del_btn_clk"
+                                        onclick="delete_song('{{row[0]}}')">Delete Song<i
+                                            class="fa fa-trash-o"></i></button></center>
+                            </td>
                             {% endif %}
                             <td style="display: none;">{{ row[3] }}</td>
                             <td style="display: none;">{{ row[4] }}</td>
@@ -423,7 +446,7 @@
 
         var lyrics = "";
 
-        function temp_update(updated_lyrics){
+        function temp_update(updated_lyrics) {
             lyrics = updated_lyrics;
         }
 
@@ -546,6 +569,32 @@
             toggleSaveButtonVisibility(); // Show the save button
         }
 
+        function delete_song(id) {
+            Id = id;
+
+            id = "#" + id;
+            $(".del").hide();
+            $(id).hide();
+            
+                
+
+                $.ajax({
+                    url: `/delete_song/${Id}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        // Handle success response, for example, update the UI
+                        console.log('Song deleted successfully');
+                        // You may want to update the UI or perform other actions
+                    },
+                    error: function (error) {
+                        // Handle error if deletion fails
+                        console.error('Error deleting song:', error);
+                    }
+                });
+
+
+        }
+
         // Function to save the edited text as paragraphs and hide the save button
         function saveEditedText() {
             const allParagraphs = document.querySelectorAll('.original, .editable');
@@ -593,6 +642,10 @@
         saveButton.addEventListener('click', function () {
             saveEditedText();
         });
+
+
+
+
     </script>
 
     {% endif %}
@@ -609,8 +662,10 @@
             baseURL = parts[0] + '//' + parts[2];
             return baseURL;
         }
-        var text = getBaseURL() + "/song/"
+        var text = "";
+
         function copyTextToClipboard(selectedId) {
+            text = getBaseURL() + "/song/"
             text = text + selectedId;
 
             try {

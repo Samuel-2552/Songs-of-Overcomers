@@ -6,13 +6,13 @@ from datetime import datetime
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import re
 
-import logging
+# import logging
 
-logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
-# Then use logging commands throughout your Flask app to log relevant information
-logging.debug('Debug message')
-logging.info('Informational message')
-logging.error('Error message')
+# logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
+# # Then use logging commands throughout your Flask app to log relevant information
+# logging.debug('Debug message')
+# logging.info('Informational message')
+# logging.error('Error message')
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -386,6 +386,23 @@ def add_songs():
         return redirect('/dashboard')
     
     return render_template('add_song.html')
+
+
+@app.route('/delete_song/<int:song_id>', methods=['DELETE'])
+def delete_song(song_id):
+    if 'username' not in session:
+        return jsonify({'message': 'Not authorized'}), 401  # Unauthorized status code
+    
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    # Delete the song based on the provided song_id
+    cursor.execute('DELETE FROM songs WHERE id = ?', (song_id,))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Song deleted successfully'}), 200  # OK status code
+
 
 @app.route('/edit_songs/<int:id>', methods=['GET', 'POST'])
 def edit_songs(id):
