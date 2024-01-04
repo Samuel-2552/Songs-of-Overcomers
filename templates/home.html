@@ -11,6 +11,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {% if login %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    {% if permission == 1 %}
     <script>
         $(document).ready(function () {
             $(".del").hide();
@@ -19,6 +20,7 @@
             });
         });
     </script>
+    {% endif %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script type="text/javascript">
         var socket = io.connect('https://' + document.domain + ':' + location.port);
@@ -165,10 +167,12 @@
                             type="button" role="tab" aria-controls="nagamese" aria-selected="false">Nagamese</button>
                     </li> -->
                     {% if login %}
+                    {% if permission == 1 %}
                     <li class="nav-item del_btn" role="presentation">
                         <button class="nav-link" type="button" onclick="">Delete Song<i class="fa fa-trash-o"
                                 aria-hidden="true"></i></button></button>
                     </li>
+                    {% endif %}
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" type="button" onclick="location.href='/dashboard'">Dashboard</button>
                     </li>
@@ -277,7 +281,7 @@
                             <th>
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Song Title</center>
                             </th>
-                            {% if login %}
+                            {% if permission == 1 %}
                             <th style="width:20%">
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Edit Song</center>
                             </th>
@@ -296,7 +300,7 @@
                         <tr data-id="{{ row[0] }}" id="{{ row[0] }}">
                             <!-- <td>{{ row[1] }}</td> -->
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[1] }}</td>
-                            {% if login %}
+                            {% if permission %}
                             <td>
                                 <center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i
                                             class="fa fa-edit"></i></button></center>
@@ -569,31 +573,7 @@
             toggleSaveButtonVisibility(); // Show the save button
         }
 
-        function delete_song(id) {
-            Id = id;
-
-            id = "#" + id;
-            $(".del").hide();
-            $(id).hide();
-            
-                
-
-                $.ajax({
-                    url: `/delete_song/${Id}`,
-                    type: 'DELETE',
-                    success: function (response) {
-                        // Handle success response, for example, update the UI
-                        console.log('Song deleted successfully');
-                        // You may want to update the UI or perform other actions
-                    },
-                    error: function (error) {
-                        // Handle error if deletion fails
-                        console.error('Error deleting song:', error);
-                    }
-                });
-
-
-        }
+        
 
         // Function to save the edited text as paragraphs and hide the save button
         function saveEditedText() {
@@ -694,7 +674,35 @@
 
 
     </script>
+    {% if permission %}
+    <script>
+        function delete_song(id) {
+            Id = id;
 
+            id = "#" + id;
+            $(".del").hide();
+            $(id).hide();
+
+
+
+            $.ajax({
+                url: `/delete_song/${Id}`,
+                type: 'DELETE',
+                success: function (response) {
+                    // Handle success response, for example, update the UI
+                    console.log('Song deleted successfully');
+                    // You may want to update the UI or perform other actions
+                },
+                error: function (error) {
+                    // Handle error if deletion fails
+                    console.error('Error deleting song:', error);
+                }
+            });
+
+
+        }
+    </script>
+    {% endif %}
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

@@ -157,15 +157,27 @@ def download_log():
 
 @app.route('/')
 def home():
+    conn = sqlite3.connect(DATABASE)
     if 'username' in session:
         login = True
         user = session['username']
+        cursor1 = conn.cursor()
+        cursor1.execute('SELECT permission FROM users where username = ?', (user,))
+        permission = cursor1.fetchone()
+        permission = permission[0]
+        
     else:
         login = False
         user=""
+        permission = 0
+
     
-    conn = sqlite3.connect(DATABASE)
+    
     cursor = conn.cursor()
+    
+
+    
+
     # Execute a query to select data from the 'songs' table
     cursor.execute('SELECT id, title, search_title, search_lyrics FROM songs')
     # Fetch all rows with the specified columns
@@ -174,7 +186,59 @@ def home():
     # print(rows)
     conn.close()
 
-    return render_template("home.html", login=login, user=user, rows=rows)
+    return render_template("home.html", login=login, user=user, rows=rows, permission = permission)
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'username' not in session and session['username'] != "Sam":
+        return "Not Authorized"
+    
+
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * from users')
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return render_template("admin_dashboard.html", users=rows)
+
+@app.route('/modify_user/<int:user_id>')
+def modify_user(user_id):
+    if 'username' not in session and session['username'] != "Sam":
+        return "Not Authorized"
+
+    # Fetch user data by user_id and perform modification logic here
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    # For instance, you might want to update user permissions
+    cursor.execute('UPDATE users SET permission = 1 WHERE id = ?', (user_id,))
+    conn.commit()
+
+    conn.close()
+
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/delete_user/<int:user_id>')
+def delete_user(user_id):
+    if 'username' not in session and session['username'] != "Sam":
+        return "Not Authorized"
+    
+
+
+    # Logic to delete user
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
+    conn.commit()
+
+    conn.close()
+
+    return redirect(url_for('admin_dashboard'))
 
 
 @app.route('/get_lyrics', methods=['POST'])
@@ -338,6 +402,8 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     if 'username' in session:
+        if session['username'] == "Sam":
+            return redirect('/admin_dashboard')
         return render_template("dashboard.html", user_name= session['username'])
     return render_template('login.html', error_message="Kindly Login to access your dashboard!", error_color='red')
 
