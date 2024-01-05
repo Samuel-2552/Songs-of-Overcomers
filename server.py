@@ -191,6 +191,52 @@ def home():
 
     return render_template("home.html", login=login, user=user, rows=sorted_rows, permission = permission)
 
+@app.route('/tamil')
+def tamil():
+    conn = sqlite3.connect(DATABASE)
+    if 'username' in session:
+        login = True
+        user = session['username']
+        cursor1 = conn.cursor()
+        cursor1.execute('SELECT permission FROM users where username = ?', (user,))
+        permission = cursor1.fetchone()
+        permission = permission[0]
+        
+    else:
+        login = False
+        user=""
+        permission = 0
+
+    
+    
+    cursor = conn.cursor()
+    
+
+    
+
+    # Execute a SELECT query to fetch all rows
+    cursor.execute('SELECT id, title, search_title, search_lyrics FROM songs')
+
+    # Fetch the results
+    all_rows = cursor.fetchall()
+
+    # Filter the results based on the search term using Python
+    filtered_results = [row for row in all_rows if 'tamil' in row[1] or 'Tamil' in row[1] or 'tamil' in row[2] or 'Tamil' in row[2]]
+
+    # Process the filtered results
+
+    # print(filtered_results)
+
+    sorted_rows = sorted(filtered_results, key=lambda x: x[1].lower())
+
+    # print(sorted_rows)
+
+
+    # print(rows)
+    conn.close()
+
+    return render_template("tamil.html", login=login, user=user, rows=sorted_rows, permission = permission)
+
 @app.route('/admin_dashboard')
 def admin_dashboard():
     if 'username' not in session and session['username'] != "Sam":
