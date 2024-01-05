@@ -102,6 +102,37 @@
             background-color: lightblue;
             /* Change to the desired background color */
         }
+
+        /* Example CSS styling */
+        .alphabet-navigation {
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+
+        .alphabet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .alphabet-list li {
+            margin-bottom: 5px;
+        }
+
+        .alphabet-list li a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .alphabet-list li a:hover {
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
     </style>
 </head>
 
@@ -390,6 +421,54 @@
         </div>
     </div>
 
+    <div class="alphabet-navigation">
+        <ul class="alphabet-list" id="alphabetList">
+            <!-- Alphabet buttons will be dynamically added here -->
+        </ul>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const alphabetList = document.getElementById('alphabetList');
+            const tableRows = document.querySelectorAll('#songTable tr');
+
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                const listItem = document.createElement('li');
+                const anchor = document.createElement('a');
+                anchor.href = "#";
+                anchor.classList.add('alphabetFilter');
+                anchor.setAttribute('data-letter', letter);
+                anchor.textContent = letter;
+                listItem.appendChild(anchor);
+                alphabetList.appendChild(listItem);
+            }
+
+            const alphabetFilters = document.querySelectorAll('.alphabetFilter');
+
+            alphabetFilters.forEach((filter) => {
+                filter.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const letter = filter.getAttribute('data-letter');
+
+                    let found = false;
+                    tableRows.forEach(row => {
+                        const firstLetter = row.querySelector('td').textContent.trim().charAt(0).toUpperCase();
+                        if (!found && firstLetter === letter) {
+                            row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            found = true; // Set found to true once first occurrence is found
+                        }
+                    });
+                });
+            });
+        });
+
+
+
+
+
+    </script>
 
 
 
@@ -573,7 +652,7 @@
             toggleSaveButtonVisibility(); // Show the save button
         }
 
-        
+
 
         // Function to save the edited text as paragraphs and hide the save button
         function saveEditedText() {

@@ -6,13 +6,13 @@ from datetime import datetime
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import re
 
-import logging
+# import logging
 
-logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
-# Then use logging commands throughout your Flask app to log relevant information
-logging.debug('Debug message')
-logging.info('Informational message')
-logging.error('Error message')
+# logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
+# # Then use logging commands throughout your Flask app to log relevant information
+# logging.debug('Debug message')
+# logging.info('Informational message')
+# logging.error('Error message')
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -183,10 +183,13 @@ def home():
     # Fetch all rows with the specified columns
     rows = cursor.fetchall()
 
+    sorted_rows = sorted(rows, key=lambda x: x[1].lower())
+
+
     # print(rows)
     conn.close()
 
-    return render_template("home.html", login=login, user=user, rows=rows, permission = permission)
+    return render_template("home.html", login=login, user=user, rows=sorted_rows, permission = permission)
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
