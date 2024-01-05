@@ -161,8 +161,6 @@ def home():
     if 'username' in session:
         login = True
         user = session['username']
-        if user == "Ranipet":
-            return redirect('/tamil')
         cursor1 = conn.cursor()
         cursor1.execute('SELECT permission FROM users where username = ?', (user,))
         permission = cursor1.fetchone()
