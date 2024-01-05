@@ -6,13 +6,13 @@ from datetime import datetime
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import re
 
-# import logging
+import logging
 
-# logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
-# # Then use logging commands throughout your Flask app to log relevant information
-# logging.debug('Debug message')
-# logging.info('Informational message')
-# logging.error('Error message')
+logging.basicConfig(filename='/home/oilnwine/flaskapp.log', level=logging.DEBUG)
+# Then use logging commands throughout your Flask app to log relevant information
+logging.debug('Debug message')
+logging.info('Informational message')
+logging.error('Error message')
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
