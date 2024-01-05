@@ -309,6 +309,7 @@
                     <thead class="table-dark">
                         <tr>
                             <th style="display: none;">Id</th>
+                            
                             <th>
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Song Title</center>
                             </th>
@@ -320,6 +321,7 @@
                                 <center style="font-size: 20px;color: bisque; font-family:cursive;">Delete</center>
                             </th>
                             {% endif %}
+                            <th >&nbsp;A-Z&nbsp;</th>
                             <!-- <th style="display: none;">Alternate Title</th>
                             <th style="display: none;">Search Title</th>
                             <th style="display: none;">Search Lyrics</th> -->
@@ -329,6 +331,7 @@
                     <tbody class="table-primary" id="songTable">
                         {% for row in rows %}
                         <tr data-id="{{ row[0] }}" id="{{ row[0] }}">
+                            
                             <!-- <td>{{ row[1] }}</td> -->
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[1] }}</td>
                             {% if permission %}
@@ -343,6 +346,7 @@
                                             class="fa fa-trash-o"></i></button></center>
                             </td>
                             {% endif %}
+                            <td>&nbsp;&nbsp;</td>
                             <td style="display: none;">{{ row[3] }}</td>
                             <td style="display: none;">{{ row[4] }}</td>
                             <!-- Add more columns as per your database structure -->
