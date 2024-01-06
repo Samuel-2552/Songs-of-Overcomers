@@ -283,6 +283,19 @@ def telugu():
 
     return render_template("telugu.html", login=login, user=user, rows=sorted_rows, permission = permission)
 
+@app.route('/bible')
+def bible():
+    if 'username' in session:
+        login = True
+        user = session['username']        
+    else:
+        login = False
+        user=""
+    
+
+
+    return render_template("bible.html", login=login, user=user, rows=rows)
+
 @app.route('/admin_dashboard')
 def admin_dashboard():
     if 'username' not in session and session['username'] != "Sam":
@@ -497,9 +510,17 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     if 'username' in session:
+        conn = sqlite3.connect(DATABASE)
+        user = session['username']
+        cursor1 = conn.cursor()
+        cursor1.execute('SELECT permission FROM users where username = ?', (user,))
+        permission = cursor1.fetchone()
+        permission = permission[0]
+        conn.close()
+        
         if session['username'] == "Sam":
             return redirect('/admin_dashboard')
-        return render_template("dashboard.html", user_name= session['username'])
+        return render_template("dashboard.html", user_name= session['username'], permission=permission)
     return render_template('login.html', error_message="Kindly Login to access your dashboard!", error_color='red')
 
 @app.route('/logout')

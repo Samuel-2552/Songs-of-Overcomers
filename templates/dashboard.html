@@ -44,12 +44,36 @@
             <div class="col-md-6">
                 <div class="card">
                     <center><div class="card-body">
-                        <h5 class="card-title">Home Page</h5>
-                        <p class="card-text">Navigate to the home page.</p>
-                        <a href="/" class="btn btn-primary">Home Page</a>
+                        <h5 class="card-title">All Songs</h5>
+                        <p class="card-text">Navigate to the All Songs.</p>
+                        <a href="/" class="btn btn-primary">All Songs</a>
                     </div></center>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <center><div class="card-body">
+                        <h5 class="card-title">Tamil Songs</h5>
+                        <p class="card-text">Navigate to the Tamil Songs.</p>
+                        <a href="/tamil" class="btn btn-primary">Tamil Songs</a>
+                    </div></center>
+                </div>
+            </div>
+            
+            
+        </div>
+        <div class="row mt-4">
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <center><div class="card-body">
+                        <h5 class="card-title">Telugu Songs</h5>
+                        <p class="card-text">Navigate to the Telugu Songs.</p>
+                        <a href="/telugu" class="btn btn-primary">Telugu Songs</a>
+                    </div></center>
+                </div>
+            </div>
+            {% if permission == 1 %}
             <div class="col-md-6">
                 <div class="card">
                     <center><div class="card-body">
@@ -59,10 +83,7 @@
                     </div></center>
                 </div>
             </div>
-            
-        </div>
-        <div class="row mt-4">
-            
+            {% endif %}
             
             <!-- Add more cards as needed -->
         </div>
