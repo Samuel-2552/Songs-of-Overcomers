@@ -629,7 +629,7 @@
 
     {% endif %}
 
-    <script>
+    <!-- <script>
         function getBaseURL() {
             var currentURL = window.location.href; // Get the current full URL
             var baseURL;
@@ -672,36 +672,8 @@
 
 
 
-    </script>
-    {% if permission %}
-    <script>
-        function delete_song(id) {
-            Id = id;
-
-            id = "#" + id;
-            $(".del").hide();
-            $(id).hide();
-
-
-
-            $.ajax({
-                url: `/delete_song/${Id}`,
-                type: 'DELETE',
-                success: function (response) {
-                    // Handle success response, for example, update the UI
-                    console.log('Song deleted successfully');
-                    // You may want to update the UI or perform other actions
-                },
-                error: function (error) {
-                    // Handle error if deletion fails
-                    console.error('Error deleting song:', error);
-                }
-            });
-
-
-        }
-    </script>
-    {% endif %}
+    </script> -->
+    
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
