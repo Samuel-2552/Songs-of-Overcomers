@@ -461,7 +461,7 @@
         rows.forEach(row => {
             row.addEventListener('click', () => {
                 const selectedId = row.getAttribute('data-id');
-                copyTextToClipboard(selectedId);
+                // copyTextToClipboard(selectedId);
                 fetch('/get_verse', {
                     method: 'POST',
                     headers: {
