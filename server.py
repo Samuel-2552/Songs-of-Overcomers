@@ -331,7 +331,7 @@ def get_verse():
             print(row[i][1])
             lyrics += f"<p id={row[i][4]} style='border: 1px solid black;padding: 10px;'>"+ "<span style='font-weight:bold;font-size:larger;'>" + result_list[selected_id][3] + ":" + str(row[i][4]) + "</span><br>" +row[i][1]+ f"<br><span style='color:green;'>{row1[i][1]}</span></p>"
             
-        # print(lyrics)
+        print(lyrics)
         return jsonify({'lyrics': lyrics, 'title':result_list[selected_id][3]})
     else:
         return jsonify({'lyrics': [], 'title': []})
