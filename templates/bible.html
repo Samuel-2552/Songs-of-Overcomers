@@ -11,7 +11,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {% if login %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script type="text/javascript">
         var socket = io.connect('https://' + document.domain + ':' + location.port);
@@ -56,6 +56,12 @@
         .fixed-button {
             position: fixed;
             bottom: 20px;
+            right: 20px;
+        }
+
+        .bible-button {
+            position: fixed;
+            bottom: 90px;
             right: 20px;
         }
 
@@ -137,7 +143,8 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><img src="static/lightTransp.png" alt="oilnwine logo" width="35px"
                     height="35px" class="d-inline-block align-text-bottom"><span
-                    style="font-size: 30px;color: bisque; font-family:cursive;"><b>&nbsp;Bible Books & Chapters</b></span></a>
+                    style="font-size: 30px;color: bisque; font-family:cursive;"><b>&nbsp;Bible Books &
+                        Chapters</b></span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarpills"
                 aria-controls="navbarpills" aria-expanded="false" aria-label="Toggle navigation"
                 style="position:fixed; top: 15px; right:15px;">
@@ -157,16 +164,17 @@
                         <button class="nav-link" id="hindi-tab" data-bs-toggle="pill" data-bs-target="#hindi"
                             type="button" role="tab" aria-controls="hindi" aria-selected="false">Hindi</button>
                     </li> -->
-                    
+
                     <li class="nav-item" role="presentation">
                         <button type="button" class="nav-link" onclick="location.href='/tamil'">Tamil</button>
                     </li>
-                    <li class="nav-item" role="presentation"> 
+                    <li class="nav-item" role="presentation">
                         <button type="button" class="nav-link" onclick="location.href='/telugu'">Telugu</button>
                     </li>
-                    <li class="nav-item" role="presentation"> 
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all"
-                        type="button" role="tab" aria-controls="all" aria-selected="true" onclick="location.href='/bible'">Bible</button>
+                            type="button" role="tab" aria-controls="all" aria-selected="true"
+                            onclick="location.href='/bible'">Bible</button>
                     </li>
                     <!-- <li class="nav-item" role="presentation">
                         <button class="nav-link" id="malayalam-tab" data-bs-toggle="pill" data-bs-target="#malayalam"
@@ -189,7 +197,7 @@
                             type="button" role="tab" aria-controls="nagamese" aria-selected="false">Nagamese</button>
                     </li> -->
                     {% if login %}
-                    
+
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" type="button" onclick="location.href='/dashboard'">Dashboard</button>
                     </li>
@@ -219,6 +227,16 @@
         </div>
     </div>
 
+    <div class="container" id="bibleicon" style="display: none;">
+        <div class="bible-button">
+            <button type="button" class="custom-search-button" data-bs-toggle="modal" data-bs-target="#bibleModal">
+
+                <img src="/static/bible-2-svgrepo-com.svg" class="bi bi-search" alt="description of your image"
+                    width="40" height="40">
+            </button>
+        </div>
+    </div>
+
     <!-- Modal for search -->
     <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -234,6 +252,37 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="clear">Clear</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for translation -->
+    <div class="modal fade" id="bibleModal" tabindex="-1" aria-labelledby="bibleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bibleModalLabel">Select Bible Language to Display</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-select" aria-label="Language" id="languageSelect">
+                        <option selected value="0">English</option>
+                        <option value="1">Hindi</option>
+                        <option value="2">Tamil</option>
+                        <option value="3">Telugu</option>
+                        <!-- <option value="4">Malayalam</option> -->
+                    </select> <br>
+                    <select class="form-select" aria-label="Split" id="splitSelect">
+                        <option selected value="0">Display Selected Language Alone</option>
+                        <option value="1">Display English and Selected Language Together</option>
+                        <option value="2">Display English and Selected Language Seperate</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="reset">Reset Language</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="update">Update
+                        Language</button>
                 </div>
             </div>
         </div>
@@ -295,20 +344,21 @@
                     <thead class="table-dark">
                         <tr>
                             <th style="display: none;">Id</th>
-                            
+
                             <th>
-                                <center style="font-size: 20px;color: bisque; font-family:cursive;">Bible Books & Chapters</center>
+                                <center style="font-size: 20px;color: bisque; font-family:cursive;">Bible Books &
+                                    Chapters</center>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="table-primary" id="songTable">
                         {% for row in rows %}
                         <tr data-id="{{ row[0] }}" id="{{ row[0] }}">
-                            
+
                             <!-- <td>{{ row[1] }}</td> -->
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[3] }}</td>
                             <!-- <td>&nbsp;&nbsp;</td> -->
-                             <td style="display: none;">{{ row[4] }}</td>
+                            <td style="display: none;">{{ row[4] }}</td>
                             <!--<td style="display: none;">{{ row[2] }}</td> -->
                             <!-- Add more columns as per your database structure -->
                         </tr>
@@ -388,7 +438,7 @@
 
 
 
-    
+
 
 
 
@@ -401,104 +451,129 @@
             document.querySelector("#loading-screen").style.display = "none";
             document.querySelector("#navbar").style.display = "block";
             document.querySelector("#searchicon").style.display = "block";
+            document.querySelector("#bibleicon").style.display = "block";
 
-        });
 
 
-        // Select the search input element and rows
+            const languageSelect = document.getElementById('languageSelect');
+            const splitSelect = document.getElementById('splitSelect');
+            const resetButton = document.getElementById('reset');
 
-        const input = document.querySelector('#searchInput');
-        const clear = document.querySelector('#clear');
-        const rows = document.querySelectorAll('#songTable tr');
+            function getSelectedValues() {
+                const selectedLanguage = languageSelect.value;
+                const selectedSplit = splitSelect.value;
+                return { language: selectedLanguage, split: selectedSplit };
+            }
+            
+            // Event listener for reset button
+            resetButton.addEventListener('click', function () {
+                // Resetting selects to default values (English and Display Selected Language Alone)
+                languageSelect.selectedIndex = 0;
+                splitSelect.selectedIndex = 0;
+            });
 
-        clear.addEventListener('click', function () {
-            input.value = '';
-            performSearch(input.value.toLowerCase());
-        });
 
-        // Add an event listener to the search input field for real-time search
-        input.addEventListener('input', function () {
-            performSearch(input.value.toLowerCase());
-        });
 
-        function performSearch(searchText) {
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                const cells = row.getElementsByTagName('td');
-                let found = false;
-                for (let j = 0; j < cells.length; j++) {
-                    const cell = cells[j];
-                    if (cell) {
-                        const text = cell.textContent.toLowerCase();
-                        if (text.includes(searchText)) {
-                            found = true;
-                            break;
+
+            // Select the search input element and rows
+
+            const input = document.querySelector('#searchInput');
+            const clear = document.querySelector('#clear');
+            const rows = document.querySelectorAll('#songTable tr');
+
+            clear.addEventListener('click', function () {
+                input.value = '';
+                performSearch(input.value.toLowerCase());
+            });
+
+            // Add an event listener to the search input field for real-time search
+            input.addEventListener('input', function () {
+                performSearch(input.value.toLowerCase());
+            });
+
+            function performSearch(searchText) {
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const cells = row.getElementsByTagName('td');
+                    let found = false;
+                    for (let j = 0; j < cells.length; j++) {
+                        const cell = cells[j];
+                        if (cell) {
+                            const text = cell.textContent.toLowerCase();
+                            if (text.includes(searchText)) {
+                                found = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (found) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+                    if (found) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
                 }
             }
-        }
 
-        const songModalTitle = document.getElementById('songModalLabel');
-        const songModalBody = document.getElementById('songbody');
+            const songModalTitle = document.getElementById('songModalLabel');
+            const songModalBody = document.getElementById('songbody');
 
-        var lyrics = "";
+            var lyrics = "";
 
-        function temp_update(updated_lyrics) {
-            lyrics = updated_lyrics;
-        }
+            function temp_update(updated_lyrics) {
+                lyrics = updated_lyrics;
+            }
 
-        function sendControl() {
-            sendData(lyrics);
-        }
+            function sendControl() {
+                sendData(lyrics);
+            }
+            
 
-        // Add a click event listener to each row
-        rows.forEach(row => {
-            row.addEventListener('click', () => {
-                const selectedId = row.getAttribute('data-id');
-                // copyTextToClipboard(selectedId);
-                fetch('/get_verse', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: selectedId }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        lyrics = data.lyrics; // Assuming data.lyrics contains the received lyrics
-                        // console.log(lyrics);
-                        const title = data.title;
-                        updateLyrics(lyrics);
-                        songModalTitle.textContent = title;
+            // Add a click event listener to each row
+            rows.forEach(row => {
+                row.addEventListener('click', () => {
+                    const selectedValues = getSelectedValues();
+                    const selectedId = row.getAttribute('data-id');
+                    // copyTextToClipboard(selectedId);
+                    fetch('/get_verse', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        
+                        body: JSON.stringify({ id: selectedId, language: selectedValues.language, split: selectedValues.split }),
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            lyrics = data.lyrics; // Assuming data.lyrics contains the received lyrics
+                            // console.log(lyrics);
+                            const title = data.title;
+                            updateLyrics(lyrics);
+                            songModalTitle.textContent = title;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
             });
+            let selectedParagraph = null;
+
+            // Function to add the 'original' class to existing paragraphs
+            function addOriginalClassToParagraphs() {
+                const allParagraphs = document.querySelectorAll('#lyricsContainer p');
+                allParagraphs.forEach(paragraph => {
+                    paragraph.classList.add('original');
+                });
+            }
+
+            function updateLyrics(lyrics) {
+                const lyricsContainer = document.getElementById('lyricsContainer');
+
+                lyricsContainer.innerHTML = lyrics; // Clear previous content
+
+                addOriginalClassToParagraphs();
+            }
+
         });
-        let selectedParagraph = null;
-
-        // Function to add the 'original' class to existing paragraphs
-        function addOriginalClassToParagraphs() {
-            const allParagraphs = document.querySelectorAll('#lyricsContainer p');
-            allParagraphs.forEach(paragraph => {
-                paragraph.classList.add('original');
-            });
-        }
-
-        function updateLyrics(lyrics) {
-            const lyricsContainer = document.getElementById('lyricsContainer');
-
-            lyricsContainer.innerHTML = lyrics; // Clear previous content
-
-            addOriginalClassToParagraphs();
-        }
 
     </script>
 
@@ -673,7 +748,7 @@
 
 
     </script> -->
-    
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
