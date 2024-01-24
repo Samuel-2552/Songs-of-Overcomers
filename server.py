@@ -237,6 +237,52 @@ def tamil():
 
     return render_template("tamil.html", login=login, user=user, rows=sorted_rows, permission = permission)
 
+@app.route('/malayalam')
+def malayalam():
+    conn = sqlite3.connect(DATABASE)
+    if 'username' in session:
+        login = True
+        user = session['username']
+        cursor1 = conn.cursor()
+        cursor1.execute('SELECT permission FROM users where username = ?', (user,))
+        permission = cursor1.fetchone()
+        permission = permission[0]
+        
+    else:
+        login = False
+        user=""
+        permission = 0
+
+    
+    
+    cursor = conn.cursor()
+    
+
+    
+
+    # Execute a SELECT query to fetch all rows
+    cursor.execute('SELECT id, title, search_title, search_lyrics FROM songs')
+
+    # Fetch the results
+    all_rows = cursor.fetchall()
+
+    # Filter the results based on the search term using Python
+    filtered_results = [row for row in all_rows if 'malayalam' in row[1] or 'Malayalam' in row[1] or 'malayalam' in row[2] or 'Malayalam' in row[2]]
+
+    # Process the filtered results
+
+    # print(filtered_results)
+
+    sorted_rows = sorted(filtered_results, key=lambda x: x[1].lower())
+
+    # print(sorted_rows)
+
+
+    # print(rows)
+    conn.close()
+
+    return render_template("malayalam.html", login=login, user=user, rows=sorted_rows, permission = permission)
+
 @app.route('/telugu')
 def telugu():
     conn = sqlite3.connect(DATABASE)
@@ -485,7 +531,7 @@ def control(user):
 @app.route('/display/<user>')
 def display(user):
 
-    return render_template("display.html")
+    return render_template("display.html", user=user)
 
 
 @socketio.on('join')
@@ -724,6 +770,10 @@ def edit_songs(id):
         return render_template("edit_song.html", id=id, title=title, alternate_title=alternate_title, link=link, chord=chord, lyrics=lyrics, transliteration_lyrics=transliteration_lyrics)
     
     return render_template('login.html', error_message="Kindly Login to edit Songs!", error_color='red')
+
+@app.route('/updates')
+def updates():
+    return render_template('updates.html')
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)

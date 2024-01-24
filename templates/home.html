@@ -169,14 +169,21 @@
                             type="button" role="tab" aria-controls="hindi" aria-selected="false">Hindi</button>
                     </li> -->
                     
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" onclick="location.href='/tamil'">Tamil</button>
-                    </li>
+                    
                     <li class="nav-item" role="presentation"> 
                         <button class="nav-link" onclick="location.href='/telugu'">Telugu</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" onclick="location.href='/tamil'">Tamil</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" onclick="location.href='/malayalam'">Malayalam</button>
+                    </li>
                     <li class="nav-item" role="presentation"> 
                         <button type="button" class="nav-link" onclick="location.href='/bible'">Bible</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" onclick="location.href='/updates'">Updates</button>
                     </li>
                     <!-- <li class="nav-item" role="presentation">
                         <button class="nav-link" id="malayalam-tab" data-bs-toggle="pill" data-bs-target="#malayalam"
@@ -335,6 +342,7 @@
                             
                             <!-- <td>{{ row[1] }}</td> -->
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[1] }}</td>
+                            <td style="display: none;">{{ row[2] }}</td>
                             {% if permission %}
                             <td>
                                 <center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i
