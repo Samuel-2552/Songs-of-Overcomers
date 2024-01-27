@@ -21,6 +21,64 @@ socketio = SocketIO(app)
 
 DATABASE = 'oilnwine.db'
 
+
+def create_tables():
+    conn = sqlite3.connect('logs.db')
+    cursor = conn.cursor()
+
+    # Create table log_details
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS log_details (
+            id INTEGER PRIMARY KEY,
+            user TEXT NOT NULL,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Create table details
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS details (
+            id INTEGER PRIMARY KEY,
+            user TEXT NOT NULL,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            data TEXT
+        )
+    ''')
+
+    # Create table controls
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS controls (
+            id INTEGER PRIMARY KEY,
+            user TEXT NOT NULL,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            data TEXT
+        )
+    ''')
+
+    conn.commit()
+    conn.close()
+
+def insert_logs(user):
+    conn = sqlite3.connect('logs.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO log_details (user, time) VALUES (?, datetime('now'))", (user,))
+    conn.commit()
+    conn.close()
+
+def insert_details(user, data):
+    conn = sqlite3.connect('logs.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO details (user, time, data) VALUES (?, datetime('now'), ?)", (user, data))
+    conn.commit()
+    conn.close()
+
+def insert_control(user, data):
+    conn = sqlite3.connect('logs.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO controls (user, time, data) VALUES (?, datetime('now'), ?)", (user, data))
+    conn.commit()
+    conn.close()
+
 def create_connection():
     conn = sqlite3.connect(DATABASE)
     return conn
@@ -142,6 +200,8 @@ def song_view(lyrics, transliteration_lyrics, chord):
 create_songs_table()
 
 create_users_table()
+
+create_tables()
 
 @app.route('/download')
 def download_db():
@@ -538,7 +598,7 @@ def display(user):
 def handle_join(user):
     room = user
     join_room(room)
-    print(f"User {user} joined room {room}")
+    insert_logs(user)
 
 @socketio.on('send_data_event')
 def send_data(data):
@@ -546,7 +606,7 @@ def send_data(data):
     emitted_data = data.get('data')
     if room and emitted_data:
         emit('update_data', emitted_data, room=room)
-        print(f"Data sent to room {room}: {emitted_data}")
+        insert_control(room, emitted_data)
 
 @socketio.on('send_para')
 def send_para(data):
@@ -554,7 +614,27 @@ def send_para(data):
     emitted_data = data.get('data')
     if room and emitted_data:
         emit('update_para', emitted_data, room=room)
-        print(f"Data sent to room {room}: {emitted_data}")
+        insert_details(room, emitted_data)
+
+# Function to fetch data from the database
+def fetch_data(table_name):
+    conn = sqlite3.connect('logs.db')
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM {table_name}")
+    data = cursor.fetchall()
+    conn.close()
+    return data
+
+# Route to display all tables
+@app.route('/admin_view')
+def admin_view():
+    if 'username' in session and session['username']=='Sam':
+        log_details_data = fetch_data('log_details')
+        details_data = fetch_data('details')
+        controls_data = fetch_data('controls')
+        return render_template('admin_view.html', log_details_data=log_details_data, details_data=details_data, controls_data=controls_data)
+    else:
+        return "Not Authorized to view this page"
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
