@@ -140,8 +140,8 @@ def song_view(lyrics, transliteration_lyrics, chord):
         if chord == None or chord =="None":
             chord = ''
         else:
-            chord = "<span id='chord' style='font-weight:bold;font-size:larger;'>" + chord + "</span><br>"
-        formatted_song = f"<p id={para_count} style='border: 1px solid black;padding: 10px;'>{chord}"
+            chord = "<span style='font-weight:bold;font-size:larger;'>" + chord + "</span><br>"
+        formatted_song = f"<p id='chord style='border: 1px solid black;padding: 10px;'>{chord}"
         for paragraph in paragraphs:
             if paragraph == "":
                 para_count +=1
