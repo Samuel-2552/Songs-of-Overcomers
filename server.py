@@ -343,6 +343,53 @@ def malayalam():
 
     return render_template("malayalam.html", login=login, user=user, rows=sorted_rows, permission = permission)
 
+
+@app.route('/hindi')
+def hindi():
+    conn = sqlite3.connect(DATABASE)
+    if 'username' in session:
+        login = True
+        user = session['username']
+        cursor1 = conn.cursor()
+        cursor1.execute('SELECT permission FROM users where username = ?', (user,))
+        permission = cursor1.fetchone()
+        permission = permission[0]
+        
+    else:
+        login = False
+        user=""
+        permission = 0
+
+    
+    
+    cursor = conn.cursor()
+    
+
+    
+
+    # Execute a SELECT query to fetch all rows
+    cursor.execute('SELECT id, title, search_title, search_lyrics FROM songs')
+
+    # Fetch the results
+    all_rows = cursor.fetchall()
+
+    # Filter the results based on the search term using Python
+    filtered_results = [row for row in all_rows if 'hindi' in row[1] or 'Hindi' in row[1] or 'hindi' in row[2] or 'Hindi' in row[2]]
+
+    # Process the filtered results
+
+    # print(filtered_results)
+
+    sorted_rows = sorted(filtered_results, key=lambda x: x[1].lower())
+
+    # print(sorted_rows)
+
+
+    # print(rows)
+    conn.close()
+
+    return render_template("hindi.html", login=login, user=user, rows=sorted_rows, permission = permission)
+
 @app.route('/telugu')
 def telugu():
     conn = sqlite3.connect(DATABASE)
@@ -833,7 +880,7 @@ def edit_songs(id):
                 conn.close()
 
 
-                return redirect('/dashboard')
+                return redirect(f'/song/{id}')
         except:
             conn.close()
             return "Selected Song Does not Exist."

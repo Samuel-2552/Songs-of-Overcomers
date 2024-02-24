@@ -167,7 +167,9 @@
                         <button class="nav-link" id="hindi-tab" data-bs-toggle="pill" data-bs-target="#hindi"
                             type="button" role="tab" aria-controls="hindi" aria-selected="false">Hindi</button>
                     </li> -->
-                    
+                    <li class="nav-item" role="presentation">
+                        <button type="button" class="nav-link" onclick="location.href='/hindi'">Hindi</button>
+                    </li>
                     
 
                     <li class="nav-item" role="presentation"> 
@@ -348,8 +350,14 @@
                             <td data-bs-toggle="modal" data-bs-target="#songModal">{{ row[1] }}</td>
                             {% if permission %}
                             <td>
-                                <center><button class="btn-primary" onclick="location.href='/edit_songs/{{row[0]}}'"><i
-                                            class="fa fa-edit"></i></button></center>
+                                <center><a
+                                    target="_blank"
+                                    class="btn-primary"
+                                    href="/edit_songs/{{row[0]}}"
+                                  >
+                                    &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i
+                                    >&nbsp;&nbsp;&nbsp;
+                                  </a></center>
                             </td>
 
                             <td class="del">
