@@ -66,9 +66,9 @@
 #     cursor.execute('''
 #         INSERT INTO songs (title, alternate_title, lyrics, search_title, search_lyrics, create_date, modified_date, username)
 #         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-#     ''', ( title, alternate_title, lyrics, 
+#     ''', ( title, alternate_title, lyrics,
 #          search_title, search_lyrics, create_date, modified_date, "OpenLP"))
-    
+
 #     conn.commit()
 #     conn.close()
 
@@ -177,16 +177,12 @@
 # for book_id, book_info in bible_books.items():
 #     book_name = book_info["name"]
 #     chapters = book_info["chapters"]
-    
+
 #     for chapter in range(1, chapters + 1):
 #         book_chapter_name = f"{book_name} {chapter}"
 #         result_list.append([len(result_list) + 1, book_id, chapter, book_chapter_name])
 
 # print(result_list)
-
-
-
-
 
 
 # bible_books = {
@@ -263,7 +259,7 @@
 # for book_id, book_info in bible_books.items():
 #     book_name = book_info["name"]
 #     chapters = book_info["chapters"]
-    
+
 #     for chapter in range(1, chapters + 1):
 #         book_chapter_name = f"{book_name} {chapter}"
 #         if book_name[0].isdigit():
@@ -278,36 +274,98 @@
 # print(result_list)
 
 
+# import sqlite3
+
+# # Connect to SQLite database (will create it if it doesn't exist)
+# conn = sqlite3.connect('logs.db')
+
+# # Create a cursor object to execute SQL commands
+# cursor = conn.cursor()
+
+# # Create table log_details
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS log_details (
+#         id INTEGER PRIMARY KEY,
+#         user TEXT NOT NULL,
+#         time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+#     )
+# ''')
+
+# # Create table details
+# cursor.execute('''
+#     CREATE TABLE IF NOT EXISTS details (
+#         id INTEGER PRIMARY KEY,
+#         user TEXT NOT NULL,
+#         time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#         data TEXT
+#     )
+# ''')
+
+# # Commit changes and close connection
+# conn.commit()
+# conn.close()
+
+# print("Database 'logs.db' created successfully with tables 'log_details' and 'details'.")
+
 
 import sqlite3
 
-# Connect to SQLite database (will create it if it doesn't exist)
+# Connect to SQLite database (creates a new database if not exists)
 conn = sqlite3.connect('logs.db')
 
 # Create a cursor object to execute SQL commands
-cursor = conn.cursor()
+cur = conn.cursor()
 
-# Create table log_details
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS log_details (
-        id INTEGER PRIMARY KEY,
-        user TEXT NOT NULL,
-        time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
+# Create add_logs table
+cur.execute('''
+CREATE TABLE IF NOT EXISTS add_logs (
+    id INTEGER PRIMARY KEY,
+    user TEXT,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    link TEXT
+)
 ''')
 
-# Create table details
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS details (
-        id INTEGER PRIMARY KEY,
-        user TEXT NOT NULL,
-        time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        data TEXT
-    )
+# Create edit_logs table
+cur.execute('''
+CREATE TABLE IF NOT EXISTS edit_logs (
+    id INTEGER PRIMARY KEY,
+    edit_id INTEGER,
+    title TEXT,
+    alternate_title TEXT,
+    lyrics TEXT,
+    transliteration TEXT,
+    chord TEXT,
+    search_title TEXT,
+    search_lyrics TEXT,
+    youtube_link TEXT,
+    create_date TEXT,
+        modified_date TEXT,
+    username TEXT
+)
+''')
+
+# Create delete_logs table
+cur.execute('''
+CREATE TABLE IF NOT EXISTS delete_logs (
+    id INTEGER PRIMARY KEY,
+    delete_id INTEGER,
+    title TEXT,
+    alternate_title TEXT,
+    lyrics TEXT,
+    transliteration TEXT,
+    chord TEXT,
+    search_title TEXT,
+    search_lyrics TEXT,
+    youtube_link TEXT,
+    create_date TEXT,
+        modified_date TEXT,
+    username TEXT
+)
 ''')
 
 # Commit changes and close connection
 conn.commit()
 conn.close()
 
-print("Database 'logs.db' created successfully with tables 'log_details' and 'details'.")
+print("Tables created successfully.")

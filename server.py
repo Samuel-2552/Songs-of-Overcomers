@@ -55,6 +55,53 @@ def create_tables():
         )
     ''')
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS add_logs (
+        id INTEGER PRIMARY KEY,
+        user TEXT,
+        time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        link TEXT
+    )
+    ''')
+
+    # Create edit_logs table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS edit_logs (
+        id INTEGER PRIMARY KEY,
+        edit_id INTEGER,
+        title TEXT,
+        alternate_title TEXT,
+        lyrics TEXT,
+        transliteration TEXT,
+        chord TEXT,
+        search_title TEXT,
+        search_lyrics TEXT,
+        youtube_link TEXT,
+        create_date TEXT,
+        modified_date TEXT,
+        username TEXT
+    )
+    ''')
+
+    # Create delete_logs table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS delete_logs (
+        id INTEGER PRIMARY KEY,
+        delete_id INTEGER,
+        title TEXT,
+        alternate_title TEXT,
+        lyrics TEXT,
+        transliteration TEXT,
+        chord TEXT,
+        search_title TEXT,
+        search_lyrics TEXT,
+        youtube_link TEXT,
+        create_date TEXT,
+        modified_date TEXT,
+        username TEXT
+    )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -832,6 +879,16 @@ def add_songs():
         ''', (title, alternate_title, lyrics, transliteration_lyrics,
               youtube_link, chord, search_title, search_lyrics, current_date, current_date, session['username']))
 
+        cursor.execute('SELECT MAX(id) FROM songs')
+        latest_id = cursor.fetchone()[0]
+
+        conn.commit()
+        conn.close()
+
+        conn = sqlite3.connect('logs.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO add_logs (user, time, link) VALUES (?, datetime('now'), ?)", (session['username'], f'/songs/{latest_id}'))
         conn.commit()
         conn.close()
 
@@ -845,6 +902,43 @@ def delete_song(song_id):
     if 'username' not in session:
         # Unauthorized status code
         return jsonify({'message': 'Not authorized'}), 401
+
+    # Connect to the oilnwine database
+    conn_oilnwine = sqlite3.connect('oilnwine.db')
+    cur_oilnwine = conn_oilnwine.cursor()
+
+    # Connect to the logs database
+    conn_logs = sqlite3.connect('logs.db')
+    cur_logs = conn_logs.cursor()
+
+    # Get the row from the songs table in oilnwine database
+    cur_oilnwine.execute("SELECT * FROM songs WHERE id=?", (song_id,))
+    row_to_transfer = cur_oilnwine.fetchone()
+
+    if row_to_transfer:
+        # Get current time
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Update the modified_date column
+        row_to_transfer = list(row_to_transfer)
+        # Assuming modified_date is the last column
+        row_to_transfer[-2] = current_time
+
+        # Insert the row into the delete_logs table in logs database
+        cur_logs.execute("""
+            INSERT INTO delete_logs (delete_id, title, alternate_title, lyrics, transliteration, chord, search_title, search_lyrics, youtube_link, create_date, modified_date, username)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, row_to_transfer)
+
+        # Commit the transaction in logs database
+        conn_logs.commit()
+        print("Row transferred successfully.")
+    else:
+        print("No such row found in songs table in oilnwine database.")
+
+    # Close connections
+    conn_oilnwine.close()
+    conn_logs.close()
 
     conn = create_connection()
     cursor = conn.cursor()
@@ -883,6 +977,42 @@ def edit_songs(id):
                 search_lyrics = lyrics.replace(
                     '\r\n', ' ') + " " + transliteration_lyrics.replace('\n', ' ')
                 search_lyrics = remove_special_characters(search_lyrics)
+
+                conn_oilnwine = sqlite3.connect('oilnwine.db')
+                cur_oilnwine = conn_oilnwine.cursor()
+
+                # Connect to the logs database
+                conn_logs = sqlite3.connect('logs.db')
+                cur_logs = conn_logs.cursor()
+
+                # Get the row from the songs table in oilnwine database
+                cur_oilnwine.execute("SELECT * FROM songs WHERE id=?", (id,))
+                row_to_transfer = cur_oilnwine.fetchone()
+
+                if row_to_transfer:
+                    # Get current time
+                    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                    # Update the modified_date column
+                    row_to_transfer = list(row_to_transfer)
+                    # Assuming modified_date is the last column
+                    row_to_transfer[-2] = current_time
+
+                    # Insert the row into the delete_logs table in logs database
+                    cur_logs.execute("""
+                        INSERT INTO edit_logs (edit_id, title, alternate_title, lyrics, transliteration, chord, search_title, search_lyrics, youtube_link, create_date, modified_date, username)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, row_to_transfer)
+
+                    # Commit the transaction in logs database
+                    conn_logs.commit()
+                    print("Row transferred successfully.")
+                else:
+                    print("No such row found in songs table in oilnwine database.")
+
+                # Close connections
+                conn_oilnwine.close()
+                conn_logs.close()
 
                 conn = create_connection()
                 cursor = conn.cursor()
@@ -924,6 +1054,35 @@ def edit_songs(id):
         return render_template("edit_song.html", id=id, title=title, alternate_title=alternate_title, link=link, chord=chord, lyrics=lyrics, transliteration_lyrics=transliteration_lyrics)
 
     return render_template('login.html', error_message="Kindly Login to edit Songs!", error_color='red')
+
+
+@app.route('/song_logs')
+def song_logs():
+    if 'username' in session and session['username'] == 'Sam':
+        # Connect to the SQLite database
+        conn = sqlite3.connect('logs.db')
+        cur = conn.cursor()
+
+        # Fetch data from the add_logs table
+        cur.execute("SELECT * FROM add_logs")
+        add_logs = cur.fetchall()
+
+        # Fetch data from the edit_logs table
+        cur.execute("SELECT * FROM edit_logs")
+        edit_logs = cur.fetchall()
+
+        # Fetch data from the delete_logs table
+        cur.execute("SELECT * FROM delete_logs")
+        delete_logs = cur.fetchall()
+
+        # Close the connection
+        conn.close()
+
+        # Render the HTML template and pass the data to it
+        return render_template('song_logs.html', add_logs=add_logs, edit_logs=edit_logs, delete_logs=delete_logs)
+
+    else:
+        return "Not Authorized to view this page"
 
 
 @app.route('/updates')
