@@ -767,7 +767,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        if (!localStorage.getItem("notification_notify1")) {
+        if (!localStorage.getItem("notification_notify2")) {
           // If not, show the notification
           document.querySelector("#loading-image").style.display = "none";
           document.getElementById("notification").style.display = "block";
@@ -791,7 +791,7 @@
         function closeNotification() {
           // Hide the notification and update the localStorage flag
           document.getElementById("notification").style.display = "none";
-          localStorage.setItem("notification_notify1", "true");
+          localStorage.setItem("notification_notify2", "true");
           // Page has fully loaded, so remove the loading screen
           document.body.classList.add("loaded");
 
