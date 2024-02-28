@@ -168,7 +168,7 @@
               <h5 class="card-title">Added Hindi Tab</h5>
               <p class="card-text">
                 - Added hindi tab<br />- Resolved edit functionality<br />-
-                Chord Posistion Changed
+                Chord Posistion Changed <br />- Feedback added in Control Page
               </p>
               <a href="#" id="closeNoti" class="btn btn-primary">Close</a>
             </div>
@@ -767,7 +767,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        if (!localStorage.getItem("notification_notify2")) {
+        if (!localStorage.getItem("notification_notify3")) {
           // If not, show the notification
           document.querySelector("#loading-image").style.display = "none";
           document.getElementById("notification").style.display = "block";
@@ -791,7 +791,7 @@
         function closeNotification() {
           // Hide the notification and update the localStorage flag
           document.getElementById("notification").style.display = "none";
-          localStorage.setItem("notification_notify2", "true");
+          localStorage.setItem("notification_notify3", "true");
           // Page has fully loaded, so remove the loading screen
           document.body.classList.add("loaded");
 
