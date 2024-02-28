@@ -683,12 +683,13 @@ def control(user):
     if 'username' not in session:
         return render_template('login.html', error_message="Kindly Login to access controls Page!", error_color='red')
     login = True
-
+    print(user)
     return render_template("control.html", login=login, user=session['username'])
 
 
 @app.route('/display/<user>')
 def display(user):
+    print(user)
 
     return render_template("display.html", user=user)
 
