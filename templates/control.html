@@ -177,7 +177,9 @@
 
     <div class="container" id="container">
       <br />
-      <div class="song-lyrics" id="lyrics" style="text-align: center"></div>
+      <div class="song-lyrics" id="lyrics" style="text-align: center">
+        {{ data | safe }}
+      </div>
     </div>
     <br />
 

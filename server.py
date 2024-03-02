@@ -683,8 +683,38 @@ def control(user):
     if 'username' not in session:
         return render_template('login.html', error_message="Kindly Login to access controls Page!", error_color='red')
     login = True
+    try:
+        # Connect to the SQLite database
+        conn = sqlite3.connect('logs.db')
+        cursor = conn.cursor()
+
+        # Define the current user
+        current_user = session['username']
+
+        # Execute the SQL query
+        cursor.execute('''
+            SELECT * FROM controls
+            WHERE user = ? 
+            AND time >= datetime('now', '-5 hours')
+            ORDER BY time DESC
+            LIMIT 1
+        ''', (current_user,))
+
+        # Fetch the result
+        result = cursor.fetchone()
+
+        # Check if a row was found
+        if result:
+            data=result[3]
+        else:
+            print("No rows found for user ")
+            data=""
+            
+
+    except sqlite3.Error as e:
+        print("Error accessing SQLite database:", e)
     print(user)
-    return render_template("control.html", login=login, user=session['username'])
+    return render_template("control.html", login=login, user=session['username'], data=data)
 
 
 @app.route('/display/<user>')
