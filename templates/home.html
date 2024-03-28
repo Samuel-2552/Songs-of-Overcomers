@@ -1057,7 +1057,16 @@
     {% if permission %}
     <script>
       function delete_song(id) {
-        Id = id;
+        var Id = id;
+
+        // Prompt the user for confirmation
+        var confirmation = confirm(
+          "Are you sure you want to delete this song?"
+        );
+        if (!confirmation) {
+          $(".del").hide();
+          return; // Cancel deletion if the user cancels the confirmation
+        }
 
         id = "#" + id;
         $(".del").hide();

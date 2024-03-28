@@ -705,11 +705,10 @@ def control(user):
 
         # Check if a row was found
         if result:
-            data=result[3]
+            data = result[3]
         else:
             print("No rows found for user ")
-            data=""
-            
+            data = ""
 
     except sqlite3.Error as e:
         print("Error accessing SQLite database:", e)
@@ -874,6 +873,7 @@ def logout():
     # Clear the user's session data
     # Replace 'username' with your session variable name
     session.pop('username', None)
+    session.clear()
 
     # Redirect to the home page or login page after logout
     return redirect(url_for('home'))
