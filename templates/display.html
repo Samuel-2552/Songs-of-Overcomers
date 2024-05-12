@@ -86,16 +86,18 @@
             var newSize = parseFloat(currentSize) - 2; // Increase font size by 2px (adjust as needed)
             lyrics.style.fontSize = newSize + "px";
           }
-        } else if (data == "blank") {
+        } else if (data == "black_bg") {
           lyrics.innerHTML = "";
           container = document.getElementById("container");
-          if (document.body.style.backgroundColor === "black") {
-            document.body.style.backgroundColor = "white"; // Change to another color or default color
-            container.style.backgroundColor = "white";
-          } else {
             document.body.style.backgroundColor = "black";
             container.style.backgroundColor = "black";
-          }
+          
+        }else if (data == "white_bg") {
+          lyrics.innerHTML = "";
+          container = document.getElementById("container");
+            document.body.style.backgroundColor = "white";
+            container.style.backgroundColor = "white";
+          
         } else {
           // Replace newline characters (\n) with <br> tags for displaying line breaks in HTML
           var formattedData = data.replace(/\n/g, "<br>");
