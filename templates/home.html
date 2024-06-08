@@ -155,7 +155,7 @@
   <body>
     <div id="loading-screen">
       <img id="loading-image" src="static/loader.gif" alt="Loading..." />
-      <!-- <div id="notification" style="background-color: #212529">
+      <div id="notification" style="background-color: #212529">
         <hr style="border-width: 2px; color: rgb(255, 255, 255)" />
         <center>
           <h1 style="color: rgb(255, 255, 255)">Updates and Release Notes!</h1>
@@ -163,19 +163,15 @@
         <hr style="border-width: 2px; color: rgb(255, 255, 255)" />
         <div class="container mt-4">
           <div class="card text-center">
-            <div class="card-header">Version 4.5 Released.</div>
+            <div class="card-header">Version 4.6 Released.</div>
             <div class="card-body">
-              <h5 class="card-title">Added Hindi Tab</h5>
-              <p class="card-text">
-                - Added hindi tab<br />- Resolved edit functionality<br />-
-                Chord Posistion Changed <br />- Feedback added in Control Page
-              </p>
+              <h5 class="card-title">Resolved Bug in blank Black Screen and White Screen</h5>
               <a href="#" id="closeNoti" class="btn btn-primary">Close</a>
             </div>
-            <div class="card-footer text-muted">24th Feb, 2023</div>
+            <div class="card-footer text-muted">13th May, 2024</div>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
 
     <nav
@@ -767,7 +763,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        if (!localStorage.getItem("notification_notify3")) {
+        if (!localStorage.getItem("notification_notify4")) {
           // If not, show the notification
           document.querySelector("#loading-image").style.display = "none";
           document.getElementById("notification").style.display = "block";
@@ -791,7 +787,7 @@
         function closeNotification() {
           // Hide the notification and update the localStorage flag
           document.getElementById("notification").style.display = "none";
-          localStorage.setItem("notification_notify3", "true");
+          localStorage.setItem("notification_notify4", "true");
           // Page has fully loaded, so remove the loading screen
           document.body.classList.add("loaded");
 
